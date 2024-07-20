@@ -1,0 +1,38 @@
+version: '3.1'
+
+services:
+  postgres:
+    container_name: postgres-yumio
+    image: postgres
+    ports:
+      - '5232:5432'
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: yumio
+      POSTGRES_USER: postgres
+      POSTGRES_DB: yumio_dev
+  redis:
+    container_name: redis-yumio
+    image: redis
+    restart: always
+    ports:
+      - 6279:6379
+  
+  rabbitmq:
+    container_name: rabbitmq-yumio
+    image: rabbitmq:3-management
+    hostname: rabbitmq-yumio
+    environment:
+      RABBITMQ_DEFAULT_USER: "yumio"
+      RABBITMQ_DEFAULT_PASS: "yumio"
+      RABBITMQ_ERLANG_COOKIE: 'yumio'
+    ports:
+      - "5672:5672"   # AMQP protocol
+      - "15672:15672" # Management UI
+    volumes:
+      - "rabbitmq_data:/var/lib/rabbitmq"
+    restart: always
+
+volumes:
+  rabbitmq_data:
+    driver: local

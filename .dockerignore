@@ -1,0 +1,4 @@
+./apps/*/docs
+**/node_modules
+**/.env
+go/**/bin

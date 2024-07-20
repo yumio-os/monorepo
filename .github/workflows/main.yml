@@ -1,0 +1,390 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - dev
+      - production
+      - hotfix/*
+      - bugfix/*
+      - feature/*
+      - dependabot/*
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      deploy_to_production:
+        description: 'Deploy to production?'
+        required: true
+        default: 'false'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies and build
+        run: |
+          cd nest
+          node -v
+          npm ci
+
+      - name: Build Common
+        run: |
+          cd nest
+          npm run build:libs:all
+
+      - name: Create artifact archive
+        run: |
+          tar -czvf artifact.tar.gz ./nest/node_modules ./nest/dist
+
+      # move for now to one call for cost effectiveness
+      - name: Run Trivy vulnerability scanner in fs mode
+        id: trivy_scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          trivy-config: trivy.yaml
+          format: 'sarif'
+          output: 'trivy-results-fs.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: 1
+        continue-on-error: true # This allows the workflow to continue even if this step fails
+        timeout-minutes: 15
+
+      - name: Upload Trivy Scan Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-scan-results
+          path: trivy-results-fs.sarif
+
+      - name: Fail if vulnerabilities found
+        if: ${{ steps.trivy_scan.outcome == 'failure' }}
+        run: exit 1
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: artifact.tar.gz
+
+  # TESTS =========================================================================
+
+  # tests-functional-yumio:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: node:20
+  #   services:
+  #     postgres:
+  #       image: postgres
+  #       env:
+  #         POSTGRES_DB: middleware-test
+  #         POSTGRES_USER: poller
+  #         POSTGRES_PASSWORD: pwd
+  #       ports:
+  #         - 5432:5432
+  #     redis:
+  #       image: redis
+  #       ports:
+  #         - 6379:6379
+  #   strategy:
+  #     matrix:
+  #       test_name: []
+  #       # test_name: ['kiosk/', 'auth/', 'anonymous/', 'webhook/']
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: build-artifacts
+
+  #     - name: Extract artifact archive
+  #       run: |
+  #         tar -xzvf artifact.tar.gz
+
+  #     - name: Update .env.test
+  #       run: |
+  #         sed -i 's/AUTH_REDIS_HOST="127.0.0.1"/AUTH_REDIS_HOST="redis"/g' .env.test
+  #         sed -i 's/BULL_REDIS_HOST="127.0.0.1"/BULL_REDIS_HOST="redis"/g' .env.test
+  #         sed -i 's/DB_HOSTNAME="localhost"/DB_HOSTNAME="postgres"/g' .env.test
+  #         cat .env.test
+
+  #     # tmp dissble tests
+  #     - name: Run tests
+  #       run: |
+  #         export NODE_OPTIONS="--max_old_space_size=3072 --insecure-http-parser"
+  #         npm run test:functional:yumio "${{ matrix.test_name }}"
+
+  # tests-unit-yumio:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: node:20
+  #   services:
+  #     postgres:
+  #       image: postgres
+  #       env:
+  #         POSTGRES_DB: middleware-test
+  #         POSTGRES_USER: poller
+  #         POSTGRES_PASSWORD: pwd
+  #       ports:
+  #         - 5432:5432
+  #     redis:
+  #       image: redis
+  #       ports:
+  #         - 6379:6379
+  #   strategy:
+  #     matrix:
+  #       test_name: ['']
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: build-artifacts
+
+  #     - name: Extract artifact archive
+  #       run: |
+  #         tar -xzvf artifact.tar.gz
+
+  #     - name: Run tests
+  #       run: npm run test:unit:yumio "${{ matrix.test_name }}"
+
+  # SECURITY ================================================================================
+  # security-code:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: node:20
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: build-artifacts
+
+  #     - name: Extract artifact archive
+  #       run: |
+  #         tar -xzvf artifact.tar.gz
+
+  #     - name: Run Trivy vulnerability scanner in fs mode
+  #       id: trivy_scan
+  #       uses: aquasecurity/trivy-action@master
+  #       with:
+  #         scan-type: 'fs'
+  #         scan-ref: '.'
+  #         trivy-config: trivy.yaml
+  #         format: 'sarif'
+  #         output: 'trivy-results-fs.sarif'
+  #         severity: 'CRITICAL,HIGH'
+  #         exit-code: 1
+  #       continue-on-error: true # This allows the workflow to continue even if this step fails
+  #       timeout-minutes: 15
+
+  #     - name: Upload Trivy Scan Results
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: trivy-scan-results
+  #         path: trivy-results-fs.sarif
+
+  #     - name: Fail if vulnerabilities found
+  #       if: ${{ steps.trivy_scan.outcome == 'failure' }}
+  #       run: exit 1
+
+  # security-image-yumio:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: build-artifacts
+
+  #     - name: Extract artifact archive
+  #       run: |
+  #         tar -xzvf artifact.tar.gz
+
+  #     - name: Build tmp image
+  #       run: |
+  #         docker build -t local:local -f ./nest/apps/yumio/Dockerfile .
+  #         docker images
+
+  #     - name: Run Trivy
+  #       uses: aquasecurity/trivy-action@master
+  #       with:
+  #         image-ref: 'local:local'
+  #         format: 'table'
+  #         exit-code: '1'
+  #         ignore-unfixed: true
+  #         vuln-type: 'os,library'
+  #         severity: 'CRITICAL,HIGH'
+
+  #  DEPLOYMENTS ======================================================================================
+
+  # deploy-production-middlelayer-yumio:
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   needs:
+  #     [
+  #       tests-unit-yumio,
+  #       tests-functional-yumio,
+  #       security-image-yumio,
+  #       security-code,
+  #     ]
+  #   runs-on: ubuntu-latest
+  #   environment: production
+  #   env:
+  #     TASK_DEFINITION_FAMILY: middlelayer-yumio-prod-task-definition
+  #     ECS_SERVICE_NAME: middlelayer-yumio-prod-service
+  #     ECS_CLUSTER_NAME: middlelayer-prod
+  #     S3_INFRA_BUCKET: middlelayer-infra
+  #   if: (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_to_production == 'true') || (github.event_name == 'push' && (github.ref == 'refs/heads/production'))
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: build-artifacts
+
+  #     - name: Extract artifact archive
+  #       run: |
+  #         tar -xzvf artifact.tar.gz
+
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: arn:aws:iam::597532874516:role/github-deploy-middlelayer-prod
+  #         aws-region: es-west-2
+
+  #     - name: Login to Amazon ECR
+  #       id: login-ecr
+  #       uses: aws-actions/amazon-ecr-login@v2
+
+  #     - name: Build, tag, and push docker image to Amazon ECR
+  #       env:
+  #         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+  #         REPOSITORY: middlelayer/yumio
+  #         IMAGE_TAG: ${{ github.sha }}-prod
+  #       run: |
+  #         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:prod-latest -f ./apps/yumio/Dockerfile .
+  #         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+  #         docker push $REGISTRY/$REPOSITORY:prod-latest
+
+  #     - name: Download Task Definition from S3
+  #       env:
+  #         TASK_DEFINITION_FILE_NAME: ${{ env.TASK_DEFINITION_FAMILY }}.json
+  #       run: |
+  #         aws s3 cp s3://$S3_INFRA_BUCKET/task_definitions/$TASK_DEFINITION_FILE_NAME task-definition.json
+
+  #     - name: Update Task Definition Image
+  #       run: |
+  #         sed -i 's/prod-latest/${{ github.sha }}-prod/g' task-definition.json
+
+  #     - name: Register ECS Task Definition
+  #       run: |
+  #         aws ecs register-task-definition --family $TASK_DEFINITION_FAMILY --cli-input-json 'file://task-definition.json'
+
+  #     - name: Update ECS Service
+  #       run: |
+  #         aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --task-definition $TASK_DEFINITION_FAMILY
+
+  # deploy-dev-middlelayer-yumio:
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   needs: [
+  #       tests-unit-yumio,
+  #       tests-functional-yumio,
+  #       # security-image-yumio,
+  #       # security-code,
+  #     ]
+  #   runs-on: ubuntu-latest
+  #   environment: dev
+  #   env:
+  #     TASK_DEFINITION_FAMILY: middlelayer-yumio-dev-task-definition
+  #     ECS_SERVICE_NAME: middlelayer-yumio-dev-service
+  #     ECS_CLUSTER_NAME: middlelayer-dev
+  #     S3_INFRA_BUCKET: middlelayer-infra
+  #   if: github.ref == 'refs/heads/dev'
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: build-artifacts
+
+  #     - name: Extract artifact archive
+  #       run: |
+  #         tar -xzvf artifact.tar.gz
+
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: arn:aws:iam::597532874516:role/github-deploy-middlelayer-dev
+  #         aws-region: es-west-2
+
+  #     - name: Login to Amazon ECR
+  #       id: login-ecr
+  #       uses: aws-actions/amazon-ecr-login@v2
+
+  #     - name: Build, tag, and push docker image to Amazon ECR
+  #       env:
+  #         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+  #         REPOSITORY: middlelayer/yumio
+  #         IMAGE_TAG: ${{ github.sha }}-dev
+  #       run: |
+  #         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:dev-latest -f ./apps/yumio/Dockerfile .
+  #         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+  #         docker push $REGISTRY/$REPOSITORY:dev-latest
+
+  #     - name: Download Task Definition from S3
+  #       env:
+  #         TASK_DEFINITION_FILE_NAME: ${{ env.TASK_DEFINITION_FAMILY }}.json
+  #       run: |
+  #         aws s3 cp s3://$S3_INFRA_BUCKET/task_definitions/$TASK_DEFINITION_FILE_NAME task-definition.json
+
+  #     - name: Update Task Definition Image
+  #       run: |
+  #         sed -i 's/dev-latest/${{ github.sha }}-dev/g' task-definition.json
+
+  #     - name: Register ECS Task Definition
+  #       run: |
+  #         aws ecs register-task-definition --family $TASK_DEFINITION_FAMILY --cli-input-json 'file://task-definition.json'
+
+  #     - name: Update ECS Service
+  #       run: |
+  #         aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --task-definition $TASK_DEFINITION_FAMILY

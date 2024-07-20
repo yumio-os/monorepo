@@ -1,0 +1,44 @@
+{
+  "configurations": [
+    {
+      "type": "node-terminal",
+      "name": "Run Script: start:dev",
+      "request": "launch",
+      "command": "npm run start:dev",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "NODE_OPTIONS": "--insecure-http-parser"
+      }
+    },
+    {
+      "type": "node-terminal",
+      "name": "Run Script: test:functional",
+      "request": "launch",
+      "command": "npm run test:functional",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "NODE_OPTIONS": "--insecure-http-parser"
+      }
+    },
+    {
+      "type": "node-terminal",
+      "name": "Run Script: test:functional:watch",
+      "request": "launch",
+      "command": "npm run test:functional:watch",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "NODE_OPTIONS": "--insecure-http-parser"
+      }
+    },
+    {
+      "type": "node-terminal",
+      "name": "Run Script: test:unit Order",
+      "request": "launch",
+      "command": "npm run test:unit  Order",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "NODE_OPTIONS": "--insecure-http-parser"
+      }
+    }
+  ]
+}

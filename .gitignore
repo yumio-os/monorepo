@@ -1,0 +1,62 @@
+# compiled output
+/express/dist
+/nest/dist
+/esmodules/dist
+/**/node_modules
+/go/**/package-lock.json
+/go/**/bin/*
+
+
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+
+# Tests
+/coverage
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# env files
+**/.env
+**/.env.*
+
+!**/.env.*.test
+!**/.env.*.example
+
+./Dockerfile
+
+.token_init.bat
+
+#Terraform
+**/.terraform/*
+
+#Adminjs
+**/.adminjs/*
+
+# dev
+nest/apps/**/test
+go/**

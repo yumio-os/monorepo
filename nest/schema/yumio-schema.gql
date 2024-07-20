@@ -1,0 +1,358 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type App {
+  name: String!
+  version: String!
+  activeProfile: String!
+}
+
+type StripeReaderBase {
+  id: String!
+  object: String!
+  deviceSwVersion: String
+  deviceType: String!
+  label: String
+  location: String
+  serialNumber: String!
+}
+
+type StripeReaderAction {
+  failureCode: String
+  failureMessage: String
+  processPaymentIntent: JSON
+  processSetupIntent: JSON
+  refundPayment: JSON
+  set_reader_display: JSON
+  status: String
+  type: String
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type Menu {
+  id: Int!
+  name: String!
+  businessId: Int!
+  business: Business!
+  locationId: Int!
+  location: Location!
+  images: ItemImages
+  items: [MenuBaseItem!]!
+  default: Boolean!
+}
+
+type Site {
+  id: Int!
+  locations: [Location!]!
+  name: String!
+  shortName: String!
+}
+
+type TaxSettings {
+  taxRate: Int
+  inclusive: Boolean
+}
+
+type Location {
+  id: Int!
+  name: String!
+  shortName: String!
+  tax: TaxSettings
+  businessId: Int
+  business: Business
+  siteId: Int
+  site: Site
+  menus: [Menu!]!
+  activeMenu: Menu
+  activeMenuId: Int
+}
+
+type StockLevel {
+  id: Int!
+  businessBaseItemId: Int!
+  businessBaseItem: BusinessBaseItem!
+  locationId: Int!
+  location: Location!
+  topLineItems: [MenuBaseItem!]
+  addonItems: [MenuAddonItem!]!
+  amount: Int!
+}
+
+type MenuAddonItem {
+  id: Int!
+  businessBaseItemId: Int!
+  businessBaseItem: BusinessBaseItem!
+  position: Int!
+  stockId: Int
+  stock: StockLevel
+  name: String
+  price: Int
+  menuAddonId: Int!
+  menuAddon: MenuAddon!
+}
+
+type MenuAddonLogic {
+  min: Int!
+  max: Int!
+  repeat: Boolean!
+}
+
+type MenuAddon {
+  id: Int!
+  type: AddonType!
+  description: String
+  images: ItemImages
+  position: Int!
+  items: [MenuAddonItem!]!
+  logic: MenuAddonLogic!
+  menuBaseItemId: Int!
+  menuBaseItem: MenuBaseItem!
+}
+
+enum AddonType {
+  """modifier"""
+  modifier
+
+  """addon"""
+  addon
+}
+
+type Tag {
+  id: Int!
+  name: String!
+  type: TagType!
+  tagMenu: [TagMenu!]!
+}
+
+enum TagType {
+  """collection"""
+  collection
+
+  """category"""
+  category
+}
+
+type TagMenu {
+  id: Int!
+  tagId: Int
+  tag: Tag!
+  position: Int
+  menuItems: [MenuBaseItem!]!
+}
+
+type MenuBaseItem {
+  id: Int!
+  businessBaseItemId: Int!
+  businessBaseItem: BusinessBaseItem!
+  menuId: Int!
+  menu: Menu!
+  addons: [MenuAddon!]!
+  name: String
+  description: String
+  images: ItemImages
+  price: Int!
+  discount: ItemDiscountSettings
+  position: Int!
+  stockId: Int
+  stock: StockLevel
+  tags: [TagMenu!]!
+  tax: TaxSettings
+}
+
+type ItemImages {
+  default: String
+  defaultLowRes: String
+  thumbnail: String
+  thumbnailLowRes: String
+}
+
+type ItemDiscountSettings {
+  amount: Int
+  amountPer: Int
+  maxDiscount: Int
+  maxDiscountPer: Int
+}
+
+type BusinessBaseItem {
+  id: Int!
+  name: String!
+  brandId: Int
+  brand: Brand
+  brandBaseItemId: Int
+  brandBaseItem: BrandBaseItem
+  businessId: Int!
+  business: Business!
+  menuItems: [MenuBaseItem!]!
+  description: String
+  images: ItemImages
+  sku: String
+  price: Int!
+  allowAsModfier: Boolean!
+  allowAsAddon: Boolean!
+  excludeFromTop: Boolean!
+}
+
+type Business {
+  id: Int!
+  name: String!
+  shortName: String!
+  brands: [Brand!]!
+  locations: [Location!]!
+  menus: [Menu!]!
+  items: [BusinessBaseItem!]!
+}
+
+type Brand {
+  id: Int!
+  name: String!
+  shortName: String!
+  businesses: [Business!]!
+  brandBaseItems: [BrandBaseItem!]!
+}
+
+type BrandBaseItem {
+  id: Int!
+  name: String!
+  description: String
+  images: ItemImages
+  sku: String!
+  suggestedPrice: Int
+  brandId: Int!
+  brand: Brand!
+}
+
+type DeliveryPlatform {
+  id: Int!
+  name: String!
+  integration: IntegrationType!
+  locations: [DeliveryPlatformLocation!]!
+}
+
+enum IntegrationType {
+  pos
+  app
+  web
+  kiosk
+  justEat
+}
+
+type DeliveryPlatformLocation {
+  id: Int!
+  name: String!
+  status: DpStatus!
+  locationId: Int!
+  location: Location!
+  deliveryPlatformId: Int!
+  deliveryPlatform: DeliveryPlatform!
+  default: Boolean!
+  externalMenu: JSON
+}
+
+enum DpStatus {
+  """new"""
+  new
+
+  """offline"""
+  offline
+
+  """live"""
+  live
+
+  """pendingOffline"""
+  pendingOffline
+
+  """pendingLive"""
+  pendingLive
+}
+
+type OPBrand {
+  id: Int!
+  name: String!
+  shortName: String!
+}
+
+type OPBusiness {
+  id: Int!
+  name: String!
+  shortName: String!
+}
+
+type OPSite {
+  id: Int!
+  name: String!
+  shortName: String!
+}
+
+type OPBusinessBaseItem {
+  id: Int!
+  brandId: Int
+  businessId: Int!
+  sku: String
+  allowAsModfier: Boolean!
+  allowAsAddon: Boolean!
+  excludeFromTop: Boolean!
+}
+
+type OPStockLevel {
+  id: Int!
+  amount: Int!
+}
+
+type OPTopLineItem {
+  id: Int!
+  businessBaseItemId: Int!
+  businessBaseItem: OPBusinessBaseItem!
+  menuId: Int!
+  hasAddons: Boolean!
+  name: String
+  description: String
+  images: ItemImages
+  price: Int
+  discount: ItemDiscountSettings
+  position: Int!
+  stock: OPStockLevel
+  tags: [TagMenu!]!
+  tax: TaxSettings
+}
+
+type OPMenu {
+  id: Int!
+  name: String!
+  businessId: Int!
+  items: [OPTopLineItem!]!
+}
+
+type OPLocation {
+  id: Int!
+  name: String!
+  shortName: String!
+  menus: [OPMenu!]!
+  tax: TaxSettings
+  businessId: Int!
+}
+
+scalar PhoneNumber
+
+type Query {
+  app: App!
+  coreSite(siteId: Int!): Site
+  coreBusiness(businessId: Int!): Business
+  coreLocation(locationId: Int!): Location
+  coreBrand(brandId: Int!): Brand
+  coreBrandBaseItem(brandBaseItemById: Int!): BrandBaseItem
+  coreBusinessBaseItem(businessBaseItemId: Int!): BusinessBaseItem
+  coreMenu(menuId: Int!): Menu
+  coreMenuBaseItem(itemId: Int!): MenuBaseItem
+  coreTag: Tag
+  opItemsInSite(siteId: Int!): [OPLocation!]!
+  opItemsInLocation(locationId: Int!): [OPMenu!]!
+  opItemsInMenu(menuId: Int!): [OPTopLineItem!]!
+  opSite(siteId: Int!): OPSite!
+  opSiteBrands(siteId: Int!): [OPBrand!]!
+  opSiteBusiness(siteId: Int!): [OPBusiness!]!
+}
