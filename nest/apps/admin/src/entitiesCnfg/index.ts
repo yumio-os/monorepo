@@ -112,9 +112,24 @@ export function getMenuBaseItem(Components) {
 }
 
 export function getMenuAddon(Components) {
-  const entity = configureEntityJson(MenuAddon, Components, ['images']);
+  const entity = configureEntityJson(MenuAddon, Components, ['images', `logic`]);
   attachImages(entity.options.properties, 'images');
+  attachLogic(entity.options.properties, 'logic');
   return entity;
+}
+
+function attachLogic(ref: any, key: string) {
+  ref[`${key}.min`] = {
+    type: 'number',
+  };
+
+  ref[`${key}.max`] = {
+    type: 'number',
+  };
+
+  ref[`${key}.repeat`] = {
+    type: 'boolean',
+  };
 }
 
 function attachImages(ref: any, key: string) {

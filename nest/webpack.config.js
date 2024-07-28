@@ -10,6 +10,12 @@ const projectsConfig = {
     tsConfigPath: 'apps/yumio/tsconfig.app.json',
     outputPath: 'dist/apps/yumio',
   },
+  // webApp: {
+  //   root: 'apps/webApp',
+  //   entryFile: 'main',
+  //   tsConfigPath: 'apps/webapp/tsconfig.app.json',
+  //   outputPath: 'dist/apps/webApp',
+  // },
 };
 
 module.exports = (options) => {

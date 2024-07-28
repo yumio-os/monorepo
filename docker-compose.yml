@@ -17,21 +17,36 @@ services:
     restart: always
     ports:
       - 6279:6379
-  
+
   rabbitmq:
     container_name: rabbitmq-yumio
     image: rabbitmq:3-management
     hostname: rabbitmq-yumio
     environment:
-      RABBITMQ_DEFAULT_USER: "yumio"
-      RABBITMQ_DEFAULT_PASS: "yumio"
+      RABBITMQ_DEFAULT_USER: 'yumio'
+      RABBITMQ_DEFAULT_PASS: 'yumio'
       RABBITMQ_ERLANG_COOKIE: 'yumio'
     ports:
-      - "5672:5672"   # AMQP protocol
-      - "15672:15672" # Management UI
+      - '5672:5672' # AMQP protocol
+      - '15672:15672' # Management UI
     volumes:
-      - "rabbitmq_data:/var/lib/rabbitmq"
+      - 'rabbitmq_data:/var/lib/rabbitmq'
     restart: always
+
+  webApp:
+    container_name: webApp-yumio
+    image: nginx:alpine
+    build:
+      context: ./apps/backend
+    ports:
+      - '3002:3002'
+    volumes:
+      # - ./docker/webApp/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nest/dist/apps/webApp:/usr/share/nginx/html
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
 
 volumes:
   rabbitmq_data:
