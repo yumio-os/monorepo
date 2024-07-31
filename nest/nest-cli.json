@@ -54,7 +54,7 @@
       "entryFile": "main",
       "sourceRoot": "apps/webApp/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/webApp/tsconfig.app.json",
+        "tsConfigPath": "apps/webApp/tsconfig.json",
         "webpack": false
       }
     }

@@ -1,5 +1,3 @@
-/** @jsxImportSource solid-js */
-
 import './index.css';
 
 /* @refresh reload */
