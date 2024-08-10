@@ -24,6 +24,7 @@ import { WebhooksModule } from './modules/webhooks/webhooks.module';
     // Integrations
     DbModule, // <<< TO GO
     RedisClientModule,
+
     // TwilioClientModule,
     PubSubModule,
 

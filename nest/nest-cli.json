@@ -47,6 +47,16 @@
         "tsConfigPath": "apps/admin/tsconfig.app.json",
         "webpack": false
       }
+    },
+    "webApp": {
+      "type": "application",
+      "root": "apps/webApp",
+      "entryFile": "main",
+      "sourceRoot": "apps/webApp/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/webApp/tsconfig.json",
+        "webpack": false
+      }
     }
   }
 }
