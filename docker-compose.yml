@@ -1,11 +1,9 @@
-version: '3.1'
-
 services:
   postgres:
     container_name: postgres-yumio
     image: postgres
     ports:
-      - '5232:5432'
+      - "5232:5432"
     restart: always
     environment:
       POSTGRES_PASSWORD: yumio
@@ -23,14 +21,14 @@ services:
     image: rabbitmq:3-management
     hostname: rabbitmq-yumio
     environment:
-      RABBITMQ_DEFAULT_USER: 'yumio'
-      RABBITMQ_DEFAULT_PASS: 'yumio'
-      RABBITMQ_ERLANG_COOKIE: 'yumio'
+      RABBITMQ_DEFAULT_USER: "yumio"
+      RABBITMQ_DEFAULT_PASS: "yumio"
+      RABBITMQ_ERLANG_COOKIE: "yumio"
     ports:
-      - '5672:5672' # AMQP protocol
-      - '15672:15672' # Management UI
+      - "5672:5672" # AMQP protocol
+      - "15672:15672" # Management UI
     volumes:
-      - 'rabbitmq_data:/var/lib/rabbitmq'
+      - "rabbitmq_data:/var/lib/rabbitmq"
     restart: always
 
   webApp:
@@ -39,7 +37,7 @@ services:
     build:
       context: ./apps/backend
     ports:
-      - '3002:3002'
+      - "3002:3002"
     volumes:
       # - ./docker/webApp/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./nest/dist/apps/webApp:/usr/share/nginx/html

@@ -36,6 +36,7 @@
     "@adminjs/express": "^6.1.0",
     "@adminjs/nestjs": "^6.1.0",
     "@adminjs/typeorm": "^5.0.1",
+    "@apollo/client": "^3.11.4",
     "@apollo/datasource-rest": "^6.2.2",
     "@apollo/server": "^4.10.2",
     "@apollo/utils.fetcher": "^3.1.0",
