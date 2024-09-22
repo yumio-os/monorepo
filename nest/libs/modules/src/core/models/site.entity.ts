@@ -2,6 +2,7 @@ import { BaseEntity, Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColum
 
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
+import { ItemImages } from './businessBaseItem.entity';
 import { Location } from './location.entity';
 
 @ObjectType()
@@ -23,4 +24,8 @@ export class Site extends BaseEntity {
   @Field((_) => String)
   @Column({ length: 7 })
   shortName: string;
+
+  @Field((_) => ItemImages, { nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
+  images?: ItemImages;
 }

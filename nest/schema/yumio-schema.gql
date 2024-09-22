@@ -51,6 +51,7 @@ type Site {
   locations: [Location!]!
   name: String!
   shortName: String!
+  images: ItemImages
 }
 
 type TaxSettings {
@@ -286,6 +287,7 @@ type OPSite {
   id: Int!
   name: String!
   shortName: String!
+  images: ItemImages
 }
 
 type OPBusinessBaseItem {
