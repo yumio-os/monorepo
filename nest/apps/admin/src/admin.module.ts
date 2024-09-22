@@ -29,6 +29,7 @@ import {
   getMenu,
   getMenuAddon,
   getMenuBaseItem,
+  getSite,
 } from './entitiesCnfg';
 
 @Module({
@@ -96,7 +97,8 @@ import {
 
               ApiKey,
 
-              Site,
+              // Site,
+              getSite(Components),
 
               DeliveryPlatform,
               // tags

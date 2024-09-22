@@ -11,6 +11,7 @@ export function mapCoreSiteToOp(cSite: Site) {
   target.id = cSite.id;
   target.name = cSite.name;
   target.shortName = cSite.shortName;
+  target.images = cSite.images;
 
   return target;
 }

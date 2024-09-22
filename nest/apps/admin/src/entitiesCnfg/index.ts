@@ -1,6 +1,15 @@
 import { getMetadataArgsStorage } from 'typeorm';
 
-import { BrandBaseItem, BusinessBaseItem, DeliveryPlatformLocation, Location, Menu, MenuAddon, MenuBaseItem } from '@yumio/modules/core';
+import {
+  BrandBaseItem,
+  BusinessBaseItem,
+  DeliveryPlatformLocation,
+  Location,
+  Menu,
+  MenuAddon,
+  MenuBaseItem,
+  Site,
+} from '@yumio/modules/core';
 
 export function configureEntity(entity, Components) {
   const columns = getMetadataArgsStorage()
@@ -75,6 +84,12 @@ export function configureEntityJson(entity, Components, exclude = []) {
 
 export function getBusinesBaseItem(Components) {
   const entity = configureEntity(BusinessBaseItem, Components);
+  attachImages(entity.options.properties, 'images');
+  return entity;
+}
+
+export function getSite(Components) {
+  const entity = configureEntity(Site, Components);
   attachImages(entity.options.properties, 'images');
   return entity;
 }
