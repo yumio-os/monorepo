@@ -12,7 +12,7 @@ import { mapCoreLocationsToOp } from '../mappers/location.mapper';
 import { mapCoreMenusToOp } from '../mappers/menu.mapper';
 import { mapCoreSiteToOp } from '../mappers/site.mapper';
 import { mapCoreMenuBaseItemsToTopItem } from '../mappers/topLineItem.mapper';
-import { OPBrand, OPBusiness, OPLocation, OPMenu, OPSite, OPTopLineItem } from '../models/topLineItem.model';
+import { OPBrand, OPBusiness, OPLocation, OPMenu, OPSite, OPTag, OPTopLineItem } from '../models/topLineItem.model';
 
 @ArgsType()
 class ArgsBySiteId {
@@ -103,5 +103,16 @@ export class OrderingPlatformResolver {
 
     const mappedBusiness = mapCoreBusinessesToOp(uniq(coreBusinessFlat));
     return mappedBusiness;
+  }
+
+  @Query((_) => [OPBusiness])
+  async opSiteTags(@Args() { siteId }: ArgsBySiteId): Promise<OPTag[]> {
+    // const data = await this.siteService.findOneById(siteId, ['locations.business']);
+    // const coreBusinessFlat: Business[] = [];
+    // coreBusinessFlat.push(...(data?.locations?.map?.((location) => location.business) ?? []));
+
+    // const mappedBusiness = mapCoreBusinessesToOp(uniq(coreBusinessFlat));
+    // return mappedBusiness;
+    return [];
   }
 }

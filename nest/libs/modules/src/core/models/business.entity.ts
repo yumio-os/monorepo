@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
@@ -25,7 +25,6 @@ export class Business extends BaseEntity {
   // Many to many relationship to Brands
   // todo manually make that realation
   @ManyToMany(() => Brand, (brand) => brand.businesses, { nullable: true })
-  // @JoinTable() // This decorator specifies that this is the owner side of the relationship
   @JoinTable({
     name: 'business_to_brand',
     joinColumn: { referencedColumnName: 'id' },
@@ -48,4 +47,22 @@ export class Business extends BaseEntity {
   @JoinTable() // This decorator specifies that this is the owner side of the relationship
   @Field((_) => [BusinessBaseItem], { defaultValue: [] })
   items: BusinessBaseItem[];
+}
+
+@Entity('business_to_brand')
+export class BusinessToBrand extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @PrimaryColumn()
+  businessId: number;
+
+  @ManyToOne((_) => Business, (business) => business.id)
+  business: Business;
+
+  @PrimaryColumn()
+  brandId: number;
+
+  @ManyToOne((_) => Brand, (brand) => brand.id)
+  brand: Brand;
 }

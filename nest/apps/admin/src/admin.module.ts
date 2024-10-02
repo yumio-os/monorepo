@@ -6,6 +6,7 @@ import {
   BrandBaseItem,
   Business,
   BusinessBaseItem,
+  BusinessToBrand,
   DeliveryPlatform,
   DeliveryPlatformLocation,
   Location,
@@ -56,6 +57,7 @@ import {
           DeliveryPlatformLocation,
           BusinessBaseItem,
           Business,
+          BusinessToBrand,
           Location,
           MenuAddon,
           Menu,
@@ -107,6 +109,7 @@ import {
 
               Business,
               getBusinesBaseItem(Components),
+              BusinessToBrand,
 
               getLocation(Components), // Location,
               getMenu(Components), // Menu

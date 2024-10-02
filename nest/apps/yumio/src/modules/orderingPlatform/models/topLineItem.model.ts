@@ -161,3 +161,12 @@ export class OPLocation {
   @Field((_) => Int)
   businessId: number;
 }
+
+@ObjectType()
+export class OPTag {
+  @Field((_) => Int)
+  id: number;
+
+  @Field((_) => String)
+  name: string;
+}

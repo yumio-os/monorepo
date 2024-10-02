@@ -363,4 +363,5 @@ type Query {
   opSite(siteId: Int!): OPSite!
   opSiteBrands(siteId: Int!): [OPBrand!]!
   opSiteBusiness(siteId: Int!): [OPBusiness!]!
+  opSiteTags(siteId: Int!): [OPBusiness!]!
 }
