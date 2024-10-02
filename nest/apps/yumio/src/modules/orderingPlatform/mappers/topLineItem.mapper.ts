@@ -15,7 +15,7 @@ export function mapCoreMenuBaseItemToTopItem(item: MenuBaseItem) {
   target.name = item.name;
   target.position = item.position ?? 0;
   target.price = item.price;
-  target.tags = item.tags;
+  target.tags = item.tags; // todo <<<<<<<<<<<<<<<<<<<<<<<<<
   target.tax = item.tax;
 
   target.businessBaseItem = mapCoreBusinessItemToOPBusinessBaseItem(item.businessBaseItem);

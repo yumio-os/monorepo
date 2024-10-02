@@ -11,6 +11,9 @@ export class OPBrand {
 
   @Field((_) => String)
   shortName: string;
+
+  @Field((_) => ItemImages, { nullable: true })
+  images?: ItemImages;
 }
 
 @ObjectType()

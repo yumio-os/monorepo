@@ -1,20 +1,6 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  Index,
-  JoinTable,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { BaseEntity, Column, Entity, Index, JoinTable, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import {
-  Field,
-  Int,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { ItemImages } from './businessBaseItem.entity';
 import { MenuAddonItem } from './menuAddonItem.entity';
@@ -60,6 +46,10 @@ export class MenuAddon extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn('increment', { type: 'bigint' }) // TOOD MOVE ALL TO BIG INTS
   id: number;
+
+  @Field((_) => String, { nullable: true })
+  @Column({ length: 20, nullable: true })
+  name?: string;
 
   @Column({ type: 'simple-enum', enum: AddonType, default: AddonType.modifier })
   @Field((_) => AddonType, { defaultValue: AddonType.modifier })

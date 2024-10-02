@@ -15,6 +15,7 @@ export function mapCoreBrandToOp(cBrand: Brand): OPBrand {
   target.id = cBrand.id;
   target.name = cBrand.name;
   target.shortName = cBrand.shortName;
+  target.images = cBrand.images;
 
   return target;
 }

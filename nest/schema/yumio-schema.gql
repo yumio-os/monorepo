@@ -105,6 +105,7 @@ type MenuAddonLogic {
 
 type MenuAddon {
   id: Int!
+  name: String
   type: AddonType!
   description: String
   images: ItemImages
@@ -140,8 +141,11 @@ enum TagType {
 
 type TagMenu {
   id: Int!
+  name: String
   tagId: Int
   tag: Tag!
+  menuId: Int
+  menu: Menu!
   position: Int
   menuItems: [MenuBaseItem!]!
 }
@@ -214,6 +218,7 @@ type Brand {
   shortName: String!
   businesses: [Business!]!
   brandBaseItems: [BrandBaseItem!]!
+  images: ItemImages
 }
 
 type BrandBaseItem {
@@ -275,6 +280,7 @@ type OPBrand {
   id: Int!
   name: String!
   shortName: String!
+  images: ItemImages
 }
 
 type OPBusiness {

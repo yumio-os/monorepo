@@ -102,6 +102,11 @@ export class MenuBaseItem extends BaseEntity {
   tags: TagMenu[];
   // todo manually make that realation - https://github.com/typeorm/typeorm/issues/1224
 
+  // @Field((_) => [MTMMenuItemToMenuTag], { defaultValue: [] })
+  // @OneToMany((_) => MTMMenuItemToMenuTag, (mtmtenuItemToMenuTag) => mtmtenuItemToMenuTag.menuBaseItemId)
+  // @JoinColumn()
+  // tags: MTMMenuItemToMenuTag[];
+
   @Field((_) => TaxSettings, { nullable: true })
   @Column({ type: 'jsonb', nullable: true })
   tax: TaxSettings;

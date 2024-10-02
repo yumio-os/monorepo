@@ -1,6 +1,7 @@
 import { getMetadataArgsStorage } from 'typeorm';
 
 import {
+  Brand,
   BrandBaseItem,
   BusinessBaseItem,
   DeliveryPlatformLocation,
@@ -90,6 +91,12 @@ export function getBusinesBaseItem(Components) {
 
 export function getSite(Components) {
   const entity = configureEntity(Site, Components);
+  attachImages(entity.options.properties, 'images');
+  return entity;
+}
+
+export function getBrand(Components) {
+  const entity = configureEntity(Brand, Components);
   attachImages(entity.options.properties, 'images');
   return entity;
 }

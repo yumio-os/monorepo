@@ -28,6 +28,10 @@ export class Brand extends BaseEntity {
   @OneToMany(() => BrandBaseItem, (brandBaseItems) => brandBaseItems.brand)
   @Field((_) => [BrandBaseItem])
   brandBaseItems: BrandBaseItem[];
+
+  @Field((_) => ItemImages, { nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
+  images?: ItemImages;
 }
 
 @ObjectType()

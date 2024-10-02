@@ -22,6 +22,7 @@ import {
 } from '@yumio/modules/core';
 
 import {
+  getBrand,
   getBrandBaseItem,
   getBusinesBaseItem,
   getDeliveryPlatformLocation,
@@ -94,17 +95,14 @@ import {
             rootPath: '/',
             resources: [
               User,
-
               ApiKey,
-
               // Site,
               getSite(Components),
-
               DeliveryPlatform,
               // tags
 
               // msa +
-              Brand,
+              getBrand(Components),
               getBrandBaseItem(Components), // BrandBaseItem,
 
               Business,

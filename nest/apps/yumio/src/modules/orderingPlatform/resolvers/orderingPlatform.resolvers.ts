@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { uniq } from 'lodash';
 
 import { Args, ArgsType, Field, Int, Query, Resolver } from '@nestjs/graphql';
 import { Brand, Business } from '@yumio/modules/core';
@@ -86,7 +86,7 @@ export class OrderingPlatformResolver {
     }
 
     // todo check dedupe
-    const mappedBrand = mapCoreBrandsToOp(_.uniq(coreBrandsFlat));
+    const mappedBrand = mapCoreBrandsToOp(uniq(coreBrandsFlat));
     return mappedBrand;
   }
 
@@ -101,7 +101,7 @@ export class OrderingPlatformResolver {
     const coreBusinessFlat: Business[] = [];
     coreBusinessFlat.push(...(data?.locations?.map?.((location) => location.business) ?? []));
 
-    const mappedBusiness = mapCoreBusinessesToOp(_.uniq(coreBusinessFlat));
+    const mappedBusiness = mapCoreBusinessesToOp(uniq(coreBusinessFlat));
     return mappedBusiness;
   }
 }
