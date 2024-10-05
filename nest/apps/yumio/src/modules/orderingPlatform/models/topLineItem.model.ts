@@ -26,6 +26,9 @@ export class OPBusiness {
 
   @Field((_) => String)
   shortName: string;
+
+  @Field((_) => ItemImages, { nullable: true })
+  images?: ItemImages;
 }
 
 @ObjectType()
@@ -169,4 +172,22 @@ export class OPTag {
 
   @Field((_) => String)
   name: string;
+
+  @Field((_) => ItemImages, { nullable: true })
+  images?: ItemImages;
+}
+
+@ObjectType()
+export class OPTagMenu {
+  @Field((_) => Int)
+  id: number;
+
+  @Field((_) => String)
+  name: string;
+
+  @Field((_) => OPTag)
+  tag: OPTag;
+
+  @Field((_) => ItemImages, { nullable: true })
+  images?: ItemImages;
 }

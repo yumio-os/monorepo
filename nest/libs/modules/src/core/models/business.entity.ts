@@ -3,7 +3,7 @@ import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import { Brand } from './brand.entity';
-import { BusinessBaseItem } from './businessBaseItem.entity';
+import { BusinessBaseItem, ItemImages } from './businessBaseItem.entity';
 import { Location } from './location.entity';
 import { Menu } from './menu.entity';
 
@@ -47,6 +47,10 @@ export class Business extends BaseEntity {
   @JoinTable() // This decorator specifies that this is the owner side of the relationship
   @Field((_) => [BusinessBaseItem], { defaultValue: [] })
   items: BusinessBaseItem[];
+
+  @Field((_) => ItemImages, { nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
+  images?: ItemImages;
 }
 
 @Entity('business_to_brand')

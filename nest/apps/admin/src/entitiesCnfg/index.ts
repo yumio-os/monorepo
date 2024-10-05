@@ -3,6 +3,7 @@ import { getMetadataArgsStorage } from 'typeorm';
 import {
   Brand,
   BrandBaseItem,
+  Business,
   BusinessBaseItem,
   DeliveryPlatformLocation,
   Location,
@@ -10,6 +11,8 @@ import {
   MenuAddon,
   MenuBaseItem,
   Site,
+  Tag,
+  TagMenu,
 } from '@yumio/modules/core';
 
 export function configureEntity(entity, Components) {
@@ -97,6 +100,24 @@ export function getSite(Components) {
 
 export function getBrand(Components) {
   const entity = configureEntity(Brand, Components);
+  attachImages(entity.options.properties, 'images');
+  return entity;
+}
+
+export function getBusiness(Components) {
+  const entity = configureEntity(Business, Components);
+  attachImages(entity.options.properties, 'images');
+  return entity;
+}
+
+export function getTag(Components) {
+  const entity = configureEntity(Tag, Components);
+  attachImages(entity.options.properties, 'images');
+  return entity;
+}
+
+export function getTagMenu(Components) {
+  const entity = configureEntity(TagMenu, Components);
   attachImages(entity.options.properties, 'images');
   return entity;
 }

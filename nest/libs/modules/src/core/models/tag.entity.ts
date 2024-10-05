@@ -13,6 +13,7 @@ import {
 
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 
+import { ItemImages } from './businessBaseItem.entity';
 import { Menu } from './menu.entity';
 import { MenuBaseItem } from './menuBaseItem.entity';
 
@@ -52,6 +53,10 @@ export class Tag extends BaseEntity {
   @Field((_) => [TagMenu], { defaultValue: [] })
   tagMenu: TagMenu[];
   // todo relation to menu base item
+
+  @Field((_) => ItemImages, { nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
+  images?: ItemImages;
 }
 
 // todo uniqune menu and tagId
@@ -102,7 +107,9 @@ export class TagMenu extends BaseEntity {
   // @JoinColumn()
   // tagItems: MTMMenuItemToMenuTag[];
 
-  // todo manually make that realation
+  @Field((_) => ItemImages, { nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
+  images?: ItemImages;
 }
 
 @ObjectType()

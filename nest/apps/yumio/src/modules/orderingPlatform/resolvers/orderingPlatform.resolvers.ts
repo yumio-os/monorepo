@@ -6,13 +6,15 @@ import { Brand, Business } from '@yumio/modules/core';
 import { LocationService } from '../../core/services/location.service';
 import { MenuService } from '../../core/services/menu.service';
 import { SiteService } from '../../core/services/site.service';
+import { TagService } from '../../core/services/tag.service';
 import { mapCoreBrandsToOp } from '../mappers/brand.mapper';
 import { mapCoreBusinessesToOp } from '../mappers/business.mapper';
 import { mapCoreLocationsToOp } from '../mappers/location.mapper';
 import { mapCoreMenusToOp } from '../mappers/menu.mapper';
 import { mapCoreSiteToOp } from '../mappers/site.mapper';
+import { mapCoreTagMenusToOp, mapCoreTagsToOp } from '../mappers/tag.mapper';
 import { mapCoreMenuBaseItemsToTopItem } from '../mappers/topLineItem.mapper';
-import { OPBrand, OPBusiness, OPLocation, OPMenu, OPSite, OPTag, OPTopLineItem } from '../models/topLineItem.model';
+import { OPBrand, OPBusiness, OPLocation, OPMenu, OPSite, OPTag, OPTagMenu, OPTopLineItem } from '../models/topLineItem.model';
 
 @ArgsType()
 class ArgsBySiteId {
@@ -37,6 +39,7 @@ export class OrderingPlatformResolver {
     private siteService: SiteService,
     private locationService: LocationService,
     private menuService: MenuService,
+    private tagServie: TagService,
   ) {}
 
   @Query((_) => [OPLocation], { defaultValue: [] })
@@ -105,14 +108,21 @@ export class OrderingPlatformResolver {
     return mappedBusiness;
   }
 
-  @Query((_) => [OPBusiness])
+  @Query((_) => [OPTag])
   async opSiteTags(@Args() { siteId }: ArgsBySiteId): Promise<OPTag[]> {
-    // const data = await this.siteService.findOneById(siteId, ['locations.business']);
-    // const coreBusinessFlat: Business[] = [];
-    // coreBusinessFlat.push(...(data?.locations?.map?.((location) => location.business) ?? []));
+    const tags = await this.tagServie.findActiveTagsInSite(siteId);
+    console.log(`++++++++++++++++++++++++++++++++++++++ A`);
+    console.log(tags);
+    const mappedTags = mapCoreTagsToOp(uniq(tags));
+    return mappedTags;
+  }
 
-    // const mappedBusiness = mapCoreBusinessesToOp(uniq(coreBusinessFlat));
-    // return mappedBusiness;
-    return [];
+  @Query((_) => [OPTagMenu])
+  async opSiteMenuTags(@Args() { siteId }: ArgsBySiteId): Promise<OPTagMenu[]> {
+    const tagMenus = await this.tagServie.findActiveMenuTagsInSite(siteId);
+    console.log(`++++++++++++++++++++++++++++++++++++++ B`);
+    console.log(tagMenus);
+    const mappedMenuTags = mapCoreTagMenusToOp(uniq(tagMenus));
+    return mappedMenuTags;
   }
 }

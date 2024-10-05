@@ -129,6 +129,7 @@ type Tag {
   name: String!
   type: TagType!
   tagMenu: [TagMenu!]!
+  images: ItemImages
 }
 
 enum TagType {
@@ -148,6 +149,7 @@ type TagMenu {
   menu: Menu!
   position: Int
   menuItems: [MenuBaseItem!]!
+  images: ItemImages
 }
 
 type MenuBaseItem {
@@ -210,6 +212,7 @@ type Business {
   locations: [Location!]!
   menus: [Menu!]!
   items: [BusinessBaseItem!]!
+  images: ItemImages
 }
 
 type Brand {
@@ -287,6 +290,7 @@ type OPBusiness {
   id: Int!
   name: String!
   shortName: String!
+  images: ItemImages
 }
 
 type OPSite {
@@ -344,6 +348,19 @@ type OPLocation {
   businessId: Int!
 }
 
+type OPTag {
+  id: Int!
+  name: String!
+  images: ItemImages
+}
+
+type OPTagMenu {
+  id: Int!
+  name: String!
+  tag: OPTag!
+  images: ItemImages
+}
+
 scalar PhoneNumber
 
 type Query {
@@ -356,12 +373,13 @@ type Query {
   coreBusinessBaseItem(businessBaseItemId: Int!): BusinessBaseItem
   coreMenu(menuId: Int!): Menu
   coreMenuBaseItem(itemId: Int!): MenuBaseItem
-  coreTag: Tag
+  coreTag(tagId: Int!): Tag
   opItemsInSite(siteId: Int!): [OPLocation!]!
   opItemsInLocation(locationId: Int!): [OPMenu!]!
   opItemsInMenu(menuId: Int!): [OPTopLineItem!]!
   opSite(siteId: Int!): OPSite!
   opSiteBrands(siteId: Int!): [OPBrand!]!
   opSiteBusiness(siteId: Int!): [OPBusiness!]!
-  opSiteTags(siteId: Int!): [OPBusiness!]!
+  opSiteTags(siteId: Int!): [OPTag!]!
+  opSiteMenuTags(siteId: Int!): [OPTagMenu!]!
 }

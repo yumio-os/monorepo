@@ -26,6 +26,7 @@ import { MenuService } from './services/menu.service';
 import { MenuBaseItemService } from './services/menuBaseItem.service';
 import { ProjectionService } from './services/projections.service';
 import { SiteService } from './services/site.service';
+import { TagService } from './services/tag.service';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { SiteService } from './services/site.service';
     BrandBaseItemService,
     MenuService,
     MenuBaseItemService,
+    TagService,
   ],
   providers: [
     SiteResolver,
@@ -67,6 +69,7 @@ import { SiteService } from './services/site.service';
     BrandBaseItemService,
     MenuService,
     MenuBaseItemService,
+    TagService,
     // =========
     ProjectionService,
   ],
