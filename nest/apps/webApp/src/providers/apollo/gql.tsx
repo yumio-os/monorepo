@@ -38,6 +38,7 @@ export type Brand = {
   brandBaseItems: Array<BrandBaseItem>;
   businesses: Array<Business>;
   id: Scalars['Int']['output'];
+  images?: Maybe<ItemImages>;
   name: Scalars['String']['output'];
   shortName: Scalars['String']['output'];
 };
@@ -58,6 +59,7 @@ export type Business = {
   __typename?: 'Business';
   brands: Array<Brand>;
   id: Scalars['Int']['output'];
+  images?: Maybe<ItemImages>;
   items: Array<BusinessBaseItem>;
   locations: Array<Location>;
   menus: Array<Menu>;
@@ -180,6 +182,7 @@ export type MenuAddon = {
   logic: MenuAddonLogic;
   menuBaseItem: MenuBaseItem;
   menuBaseItemId: Scalars['Int']['output'];
+  name?: Maybe<Scalars['String']['output']>;
   position: Scalars['Int']['output'];
   type: AddonType;
 };
@@ -228,6 +231,7 @@ export type MenuBaseItem = {
 export type OpBrand = {
   __typename?: 'OPBrand';
   id: Scalars['Int']['output'];
+  images?: Maybe<ItemImages>;
   name: Scalars['String']['output'];
   shortName: Scalars['String']['output'];
 };
@@ -235,6 +239,7 @@ export type OpBrand = {
 export type OpBusiness = {
   __typename?: 'OPBusiness';
   id: Scalars['Int']['output'];
+  images?: Maybe<ItemImages>;
   name: Scalars['String']['output'];
   shortName: Scalars['String']['output'];
 };
@@ -282,6 +287,21 @@ export type OpStockLevel = {
   id: Scalars['Int']['output'];
 };
 
+export type OpTag = {
+  __typename?: 'OPTag';
+  id: Scalars['Int']['output'];
+  images?: Maybe<ItemImages>;
+  name: Scalars['String']['output'];
+};
+
+export type OpTagMenu = {
+  __typename?: 'OPTagMenu';
+  id: Scalars['Int']['output'];
+  images?: Maybe<ItemImages>;
+  name: Scalars['String']['output'];
+  tag: OpTag;
+};
+
 export type OpTopLineItem = {
   __typename?: 'OPTopLineItem';
   businessBaseItem: OpBusinessBaseItem;
@@ -318,6 +338,8 @@ export type Query = {
   opSite: OpSite;
   opSiteBrands: Array<OpBrand>;
   opSiteBusiness: Array<OpBusiness>;
+  opSiteMenuTags: Array<OpTagMenu>;
+  opSiteTags: Array<OpTag>;
 };
 
 
@@ -361,6 +383,11 @@ export type QueryCoreSiteArgs = {
 };
 
 
+export type QueryCoreTagArgs = {
+  tagId: Scalars['Int']['input'];
+};
+
+
 export type QueryOpItemsInLocationArgs = {
   locationId: Scalars['Int']['input'];
 };
@@ -388,6 +415,18 @@ export type QueryOpSiteBrandsArgs = {
 
 export type QueryOpSiteBusinessArgs = {
   siteId: Scalars['Int']['input'];
+};
+
+
+export type QueryOpSiteMenuTagsArgs = {
+  siteId: Scalars['Int']['input'];
+  type?: InputMaybe<TagType>;
+};
+
+
+export type QueryOpSiteTagsArgs = {
+  siteId: Scalars['Int']['input'];
+  type?: InputMaybe<TagType>;
 };
 
 export type Site = {
@@ -437,6 +476,7 @@ export type StripeReaderBase = {
 export type Tag = {
   __typename?: 'Tag';
   id: Scalars['Int']['output'];
+  images?: Maybe<ItemImages>;
   name: Scalars['String']['output'];
   tagMenu: Array<TagMenu>;
   type: TagType;
@@ -445,7 +485,11 @@ export type Tag = {
 export type TagMenu = {
   __typename?: 'TagMenu';
   id: Scalars['Int']['output'];
+  images?: Maybe<ItemImages>;
+  menu: Menu;
+  menuId?: Maybe<Scalars['Int']['output']>;
   menuItems: Array<MenuBaseItem>;
+  name?: Maybe<Scalars['String']['output']>;
   position?: Maybe<Scalars['Int']['output']>;
   tag: Tag;
   tagId?: Maybe<Scalars['Int']['output']>;
@@ -466,27 +510,73 @@ export type TaxSettings = {
 
 export type OpSiteQueryVariables = Exact<{
   siteId: Scalars['Int']['input'];
+  typeCollection?: InputMaybe<TagType>;
+  typeCategory?: InputMaybe<TagType>;
 }>;
 
 
-export type OpSiteQuery = { __typename?: 'Query', opSite: { __typename?: 'OPSite', name: string, shortName: string, images?: { __typename?: 'ItemImages', thumbnail?: string | null, thumbnailLowRes?: string | null } | null } };
-
-export type OpSiteShortQueryVariables = Exact<{
-  siteId: Scalars['Int']['input'];
-}>;
-
-
-export type OpSiteShortQuery = { __typename?: 'Query', opSite: { __typename?: 'OPSite', id: number, name: string, shortName: string, images?: { __typename?: 'ItemImages', thumbnail?: string | null, thumbnailLowRes?: string | null } | null } };
+export type OpSiteQuery = { __typename?: 'Query', opSite: { __typename?: 'OPSite', id: number, name: string, shortName: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }, opSiteBrands: Array<{ __typename?: 'OPBrand', id: number, name: string, shortName: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }>, opSiteBusiness: Array<{ __typename?: 'OPBusiness', id: number, name: string, shortName: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }>, opSiteTags: Array<{ __typename?: 'OPTag', id: number, name: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }>, opSiteMenuTagsCollection: Array<{ __typename?: 'OPTagMenu', id: number, name: string, tag: { __typename?: 'OPTag', id: number, name: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }, images?: { __typename?: 'ItemImages', default?: string | null } | null }>, opSiteMenuTagsCategory: Array<{ __typename?: 'OPTagMenu', id: number, name: string, tag: { __typename?: 'OPTag', id: number, name: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }, images?: { __typename?: 'ItemImages', default?: string | null } | null }> };
 
 
 export const OpSiteDocument = gql`
-    query OpSite($siteId: Int!) {
+    query OpSite($siteId: Int!, $typeCollection: TagType, $typeCategory: TagType) {
   opSite(siteId: $siteId) {
+    id
     name
     shortName
     images {
-      thumbnail
-      thumbnailLowRes
+      default
+    }
+  }
+  opSiteBrands(siteId: $siteId) {
+    id
+    name
+    shortName
+    images {
+      default
+    }
+  }
+  opSiteBusiness(siteId: $siteId) {
+    id
+    name
+    shortName
+    images {
+      default
+    }
+  }
+  opSiteTags(siteId: $siteId) {
+    id
+    name
+    images {
+      default
+    }
+  }
+  opSiteMenuTagsCollection: opSiteMenuTags(siteId: $siteId, type: $typeCollection) {
+    id
+    name
+    tag {
+      id
+      name
+      images {
+        default
+      }
+    }
+    images {
+      default
+    }
+  }
+  opSiteMenuTagsCategory: opSiteMenuTags(siteId: $siteId, type: $typeCategory) {
+    id
+    name
+    tag {
+      id
+      name
+      images {
+        default
+      }
+    }
+    images {
+      default
     }
   }
 }
@@ -505,6 +595,8 @@ export const OpSiteDocument = gql`
  * const { data, loading, error } = useOpSiteQuery({
  *   variables: {
  *      siteId: // value for 'siteId'
+ *      typeCollection: // value for 'typeCollection'
+ *      typeCategory: // value for 'typeCategory'
  *   },
  * });
  */
@@ -524,49 +616,3 @@ export type OpSiteQueryHookResult = ReturnType<typeof useOpSiteQuery>;
 export type OpSiteLazyQueryHookResult = ReturnType<typeof useOpSiteLazyQuery>;
 export type OpSiteSuspenseQueryHookResult = ReturnType<typeof useOpSiteSuspenseQuery>;
 export type OpSiteQueryResult = Apollo.QueryResult<OpSiteQuery, OpSiteQueryVariables>;
-export const OpSiteShortDocument = gql`
-    query OpSiteShort($siteId: Int!) {
-  opSite(siteId: $siteId) {
-    id
-    name
-    shortName
-    images {
-      thumbnail
-      thumbnailLowRes
-    }
-  }
-}
-    `;
-
-/**
- * __useOpSiteShortQuery__
- *
- * To run a query within a React component, call `useOpSiteShortQuery` and pass it any options that fit your needs.
- * When your component renders, `useOpSiteShortQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOpSiteShortQuery({
- *   variables: {
- *      siteId: // value for 'siteId'
- *   },
- * });
- */
-export function useOpSiteShortQuery(baseOptions: Apollo.QueryHookOptions<OpSiteShortQuery, OpSiteShortQueryVariables> & ({ variables: OpSiteShortQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<OpSiteShortQuery, OpSiteShortQueryVariables>(OpSiteShortDocument, options);
-      }
-export function useOpSiteShortLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpSiteShortQuery, OpSiteShortQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<OpSiteShortQuery, OpSiteShortQueryVariables>(OpSiteShortDocument, options);
-        }
-export function useOpSiteShortSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpSiteShortQuery, OpSiteShortQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<OpSiteShortQuery, OpSiteShortQueryVariables>(OpSiteShortDocument, options);
-        }
-export type OpSiteShortQueryHookResult = ReturnType<typeof useOpSiteShortQuery>;
-export type OpSiteShortLazyQueryHookResult = ReturnType<typeof useOpSiteShortLazyQuery>;
-export type OpSiteShortSuspenseQueryHookResult = ReturnType<typeof useOpSiteShortSuspenseQuery>;
-export type OpSiteShortQueryResult = Apollo.QueryResult<OpSiteShortQuery, OpSiteShortQueryVariables>;

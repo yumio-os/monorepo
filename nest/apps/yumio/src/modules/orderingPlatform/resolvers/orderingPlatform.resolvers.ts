@@ -1,7 +1,7 @@
 import { uniq } from 'lodash';
 
 import { Args, ArgsType, Field, Int, Query, Resolver } from '@nestjs/graphql';
-import { Brand, Business } from '@yumio/modules/core';
+import { Brand, Business, TagType } from '@yumio/modules/core';
 
 import { LocationService } from '../../core/services/location.service';
 import { MenuService } from '../../core/services/menu.service';
@@ -20,6 +20,15 @@ import { OPBrand, OPBusiness, OPLocation, OPMenu, OPSite, OPTag, OPTagMenu, OPTo
 class ArgsBySiteId {
   @Field((_) => Int)
   siteId: number;
+}
+
+@ArgsType()
+class ArgsTagBySiteId {
+  @Field((_) => Int)
+  siteId: number;
+
+  @Field((_) => TagType, { nullable: true })
+  type?: TagType;
 }
 
 @ArgsType()
@@ -109,19 +118,15 @@ export class OrderingPlatformResolver {
   }
 
   @Query((_) => [OPTag])
-  async opSiteTags(@Args() { siteId }: ArgsBySiteId): Promise<OPTag[]> {
-    const tags = await this.tagServie.findActiveTagsInSite(siteId);
-    console.log(`++++++++++++++++++++++++++++++++++++++ A`);
-    console.log(tags);
+  async opSiteTags(@Args() { siteId, type }: ArgsTagBySiteId): Promise<OPTag[]> {
+    const tags = await this.tagServie.findActiveTagsInSite(siteId, type);
     const mappedTags = mapCoreTagsToOp(uniq(tags));
     return mappedTags;
   }
 
   @Query((_) => [OPTagMenu])
-  async opSiteMenuTags(@Args() { siteId }: ArgsBySiteId): Promise<OPTagMenu[]> {
-    const tagMenus = await this.tagServie.findActiveMenuTagsInSite(siteId);
-    console.log(`++++++++++++++++++++++++++++++++++++++ B`);
-    console.log(tagMenus);
+  async opSiteMenuTags(@Args() { siteId, type }: ArgsTagBySiteId): Promise<OPTagMenu[]> {
+    const tagMenus = await this.tagServie.findActiveMenuTagsInSite(siteId, type);
     const mappedMenuTags = mapCoreTagMenusToOp(uniq(tagMenus));
     return mappedMenuTags;
   }

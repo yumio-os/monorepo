@@ -1,35 +1,23 @@
 import { Component, createEffect, createSignal, JSXElement, onMount } from 'solid-js';
 import { render } from 'solid-js/web';
 
-import { gql } from '@apollo/client';
-
 import { ApolloProvider, useApollo } from '../../providers/apollo/Apollo';
-import { OpSiteQuery, OpSiteQueryVariables } from '../../providers/apollo/gql';
+import { OpSiteDocument, OpSiteQuery, OpSiteQueryVariables, TagType } from '../../providers/apollo/gql';
 import { AuthProvider } from '../../providers/auth/Auth';
 import styles from './Site.module.css';
 
 const root = document.getElementById('root');
 
-const get_OpSite = gql`
-  query OpSite($siteId: Int!) {
-    opSite(siteId: $siteId) {
-      id
-      name
-      shortName
-      images {
-        default
-        defaultLowRes
-        thumbnail
-        thumbnailLowRes
-      }
-    }
-  }
-`;
-
 const Site: Component = (): JSXElement => {
   // Create a signal to store the ID from the URL
   const [siteId, setSiteId] = createSignal<string | null>(null);
   const [siteData, setSiteData] = createSignal<OpSiteQuery['opSite'] | null>(null);
+  const [brandsData, setBrandsData] = createSignal<OpSiteQuery['opSiteBrands'] | null>(null);
+  const [businessData, setBusinessData] = createSignal<OpSiteQuery['opSiteBusiness'] | null>(null);
+  const [tagsData, setTagsData] = createSignal<OpSiteQuery['opSiteTags'] | null>(null);
+  const [menuTagsCollectionData, setMenuTagsCollectionData] = createSignal<OpSiteQuery['opSiteMenuTagsCollection'] | null>(null);
+  const [menuTagsCategoryData, setMenuTagsCategoryData] = createSignal<OpSiteQuery['opSiteMenuTagsCategory'] | null>(null);
+
   const [errorSiteState, setErrorSiteState] = createSignal<any>(null);
   const [loadingState, setLoadingState] = createSignal(true);
 
@@ -58,12 +46,21 @@ const Site: Component = (): JSXElement => {
     if (siteId()) {
       client
         .query<OpSiteQuery, OpSiteQueryVariables>({
-          query: get_OpSite,
-          variables: { siteId: Number(siteId()) },
+          query: OpSiteDocument,
+          variables: {
+            siteId: Number(siteId()),
+            typeCategory: TagType.Category,
+            typeCollection: TagType.Collection,
+          },
         })
         .then((result) => {
           setLoadingState(false);
           setSiteData(result.data.opSite);
+          setBrandsData(result.data.opSiteBrands);
+          setBusinessData(result.data.opSiteBusiness);
+          setTagsData(result.data.opSiteTags);
+          setMenuTagsCategoryData(result.data.opSiteMenuTagsCategory);
+          setMenuTagsCollectionData(result.data.opSiteMenuTagsCollection);
         })
         .catch((err) => {
           setLoadingState(false);
@@ -74,23 +71,89 @@ const Site: Component = (): JSXElement => {
 
   return (
     <>
-      <div class={styles.Site}>
+      <div class={`d-flex justify-content-center align-items-center vh-100 ${styles.Site} p-5`}>
         {loadingState() && <p>Loading site data...</p>}
         {errorSiteState() && <p>Error: {errorSiteState()}</p>}
 
         {/* Check if siteData exists */}
         {siteData() && (
-          <div class="d-flex justify-content-center align-items-center vh-100">
-            <div class="card text-center" style="width: 18rem;">
-              {siteData().images.thumbnail && <img src={siteData().images.thumbnail} class="card-img-top" alt={siteData().name} />}
-              {!siteData().images.thumbnail && <img src="https://via.placeholder.com/150" class="card-img-top" alt={siteData().name} />}
-              <div class="card-body">
-                <h5 class="card-title">{siteData().name}</h5>
-                <p class="card-text">{siteData().description}</p>
-                <a href="#" class="btn btn-primary">
-                  View Menu
-                </a>
-              </div>
+          <div class="card text-center container-fluid">
+            {siteData().images.default && <img src={siteData().images.default} class="card-img-top" alt={siteData().name} />}
+            {!siteData().images.default && <img src="https://via.placeholder.com/150" class="card-img-top" alt={siteData().name} />}
+            <div class="card-body">
+              <h5 class="card-title">{siteData().name}</h5>
+              {/* <!--- replace --> */}
+              <p class="card-text">{siteData().name}</p>
+
+              {/* TODO add configuerable elements */}
+
+              {/* BRAND */}
+              {brandsData() && brandsData()?.length > 1 && (
+                <div id="siteCarouselBrands">
+                  <div class="container-fluid">
+                    <div class="d-flex flex-row flex-nowrap overflow-auto">
+                      <For each={brandsData()}>
+                        {(brand, index) => (
+                          <div class="col-sm-3">
+                            <div class="card card-body">{brand?.name}</div>
+                          </div>
+                        )}
+                      </For>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* BUSINESS */}
+              {businessData() && businessData()?.length > 1 && (
+                <div id="siteCarouselBusiness">
+                  <div class="container-fluid">
+                    <div class="d-flex flex-row flex-nowrap overflow-auto">
+                      <For each={businessData()}>
+                        {(business, index) => (
+                          <div class="col-sm-3">
+                            <div class="card card-body">{business?.name}</div>
+                          </div>
+                        )}
+                      </For>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* CATEGORIES */}
+              {menuTagsCategoryData() && menuTagsCategoryData()?.length > 0 && (
+                <div id="siteCarouselmenuTags" title="categories">
+                  <div class="container-fluid">
+                    <div class="d-flex flex-row flex-nowrap overflow-auto">
+                      <For each={menuTagsCategoryData()}>
+                        {(menuTag, index) => (
+                          <div class="col-sm-3">
+                            <div class="card card-body">{menuTag?.name}</div>
+                          </div>
+                        )}
+                      </For>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* COLLECTIONS */}
+              {menuTagsCollectionData() && menuTagsCollectionData()?.length > 0 && (
+                <div id="siteCarouselmenuTags" title="collections">
+                  <div class="container-fluid">
+                    <div class="d-flex flex-row flex-nowrap overflow-auto">
+                      <For each={menuTagsCollectionData()}>
+                        {(menuTag, index) => (
+                          <div class="col-sm-3">
+                            <div class="card card-body">{menuTag?.name}</div>
+                          </div>
+                        )}
+                      </For>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
