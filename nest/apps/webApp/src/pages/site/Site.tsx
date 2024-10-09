@@ -71,31 +71,49 @@ const Site: Component = (): JSXElement => {
 
   return (
     <>
-      <div class={`d-flex justify-content-center align-items-center vh-100 ${styles.Site} p-5`}>
+      <div class={`d-flex justify-content-center align-items-center ${styles.Site} px-5 py-2`}>
         {loadingState() && <p>Loading site data...</p>}
         {errorSiteState() && <p>Error: {errorSiteState()}</p>}
 
         {/* Check if siteData exists */}
         {siteData() && (
-          <div class="card text-center container-fluid">
-            {siteData().images.default && <img src={siteData().images.default} class="card-img-top" alt={siteData().name} />}
-            {!siteData().images.default && <img src="https://via.placeholder.com/150" class="card-img-top" alt={siteData().name} />}
+          <div class="card text-center container-fluid p-0">
+            <div class={`card-img-top overflow-hidden position-relative ${styles.CustomImgContainer}`} alt={siteData().name}>
+              <img
+                src={siteData().images.default || 'https://via.placeholder.com/150'}
+                class={`img-fluid ${styles.CustomImg}`}
+                alt={siteData().name}
+              />
+              {/* overlay this section over image, so it is on the bottom of card-img-top */}
+              <div
+                class="overlay-content position-absolute bottom-0 w-100 p-3 text-white text-start"
+                style="background: rgba(0, 0, 0, 0.5);"
+              >
+                <h5 class="card-title m-0">{siteData().name}</h5>
+                <p class="card-text m-0">Location Address and some other info</p>
+              </div>
+            </div>
             <div class="card-body">
-              <h5 class="card-title">{siteData().name}</h5>
-              {/* <!--- replace --> */}
-              <p class="card-text">{siteData().name}</p>
-
               {/* TODO add configuerable elements */}
 
-              {/* BRAND */}
-              {brandsData() && brandsData()?.length > 1 && (
-                <div id="siteCarouselBrands">
+              {/* BRAND min 2 */}
+              {brandsData() && brandsData()?.length > 0 && (
+                <div id="siteCarouselBrands" class="my-2">
                   <div class="container-fluid">
                     <div class="d-flex flex-row flex-nowrap overflow-auto">
                       <For each={brandsData()}>
                         {(brand, index) => (
                           <div class="col-sm-3">
-                            <div class="card card-body">{brand?.name}</div>
+                            <div class="card me-2">
+                              <div class={`card-img-top overflow-hidden ${styles.CustomCardImageContainer}`}>
+                                <img
+                                  src={brand?.images?.default || 'https://via.placeholder.com/150'}
+                                  class={`img-fluid ${styles.CustomImg}`}
+                                  alt={brand.name}
+                                />
+                              </div>
+                              <div class="card-body">{brand?.name}</div>
+                            </div>
                           </div>
                         )}
                       </For>
@@ -104,15 +122,24 @@ const Site: Component = (): JSXElement => {
                 </div>
               )}
 
-              {/* BUSINESS */}
-              {businessData() && businessData()?.length > 1 && (
-                <div id="siteCarouselBusiness">
+              {/* BUSINESS  min 2*/}
+              {businessData() && businessData()?.length > 0 && (
+                <div id="siteCarouselBusiness" class="my-2">
                   <div class="container-fluid">
                     <div class="d-flex flex-row flex-nowrap overflow-auto">
                       <For each={businessData()}>
                         {(business, index) => (
                           <div class="col-sm-3">
-                            <div class="card card-body">{business?.name}</div>
+                            <div class="card me-2">
+                              <div class={`card-img-top overflow-hidden ${styles.CustomCardImageContainer}`}>
+                                <img
+                                  src={business?.images?.default || 'https://via.placeholder.com/150'}
+                                  class={`img-fluid ${styles.CustomImg}`}
+                                  alt={business.name}
+                                />
+                              </div>
+                              <div class="card-body">{business?.name}</div>
+                            </div>
                           </div>
                         )}
                       </For>
@@ -123,13 +150,22 @@ const Site: Component = (): JSXElement => {
 
               {/* CATEGORIES */}
               {menuTagsCategoryData() && menuTagsCategoryData()?.length > 0 && (
-                <div id="siteCarouselmenuTags" title="categories">
+                <div id="siteCarouselmenuTags" title="categories" class="my-2">
                   <div class="container-fluid">
                     <div class="d-flex flex-row flex-nowrap overflow-auto">
                       <For each={menuTagsCategoryData()}>
                         {(menuTag, index) => (
-                          <div class="col-sm-3">
-                            <div class="card card-body">{menuTag?.name}</div>
+                          <div class="col-sm-2">
+                            <div class="card me-2">
+                              <div class={`card-img-top overflow-hidden ${styles.CustomCardIconContainer}`}>
+                                <img
+                                  src={menuTag?.images?.default || 'https://via.placeholder.com/150'}
+                                  class={`img-fluid ${styles.CustomImg}`}
+                                  alt={menuTag.name}
+                                />
+                              </div>
+                              <div class="card-body">{menuTag?.name}</div>
+                            </div>
                           </div>
                         )}
                       </For>
@@ -140,13 +176,22 @@ const Site: Component = (): JSXElement => {
 
               {/* COLLECTIONS */}
               {menuTagsCollectionData() && menuTagsCollectionData()?.length > 0 && (
-                <div id="siteCarouselmenuTags" title="collections">
+                <div id="siteCarouselmenuTags" title="collections" class="my-2">
                   <div class="container-fluid">
                     <div class="d-flex flex-row flex-nowrap overflow-auto">
                       <For each={menuTagsCollectionData()}>
                         {(menuTag, index) => (
                           <div class="col-sm-3">
-                            <div class="card card-body">{menuTag?.name}</div>
+                            <div class="card me-2">
+                              <div class={`card-img-top overflow-hidden ${styles.CustomCardIconContainer}`}>
+                                <img
+                                  src={menuTag?.images?.default || 'https://via.placeholder.com/150'}
+                                  class={`img-fluid ${styles.CustomImg}`}
+                                  alt={menuTag.name}
+                                />
+                              </div>
+                              <div class="card-body">{menuTag?.name}</div>
+                            </div>
                           </div>
                         )}
                       </For>
