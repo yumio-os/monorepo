@@ -26,12 +26,15 @@ import {
   getBrand,
   getBrandBaseItem,
   getBusinesBaseItem,
+  getBusiness,
   getDeliveryPlatformLocation,
   getLocation,
   getMenu,
   getMenuAddon,
   getMenuBaseItem,
   getSite,
+  getTag,
+  getTagMenu,
 } from './entitiesCnfg';
 
 @Module({
@@ -107,7 +110,7 @@ import {
               getBrand(Components),
               getBrandBaseItem(Components), // BrandBaseItem,
 
-              Business,
+              getBusiness(Components), // Business,
               getBusinesBaseItem(Components),
               BusinessToBrand,
 
@@ -118,8 +121,8 @@ import {
               MenuAddonItem,
               StockLevel,
               getDeliveryPlatformLocation(Components), // DeliveryPlatformLocation,
-              Tag, // todo tag local
-              TagMenu,
+              getTag(Components), // Tag, // todo tag local
+              getTagMenu(Components), // TagMenu,
               MTMMenuItemToMenuTag,
             ],
             dashboard: {

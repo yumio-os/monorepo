@@ -11,7 +11,28 @@ export class MenuService {
     private repo: Repository<Menu>,
   ) {}
 
-  async findOneById(id: number, relations = [], entityManager = this.repo.manager) {
-    return entityManager.findOne(Menu, { where: { id }, relations });
+  async findOneById(id: number, active?: boolean, relations = [], entityManager = this.repo.manager) {
+    const query = { where: { id }, relations };
+
+    if (active !== undefined && active !== null) {
+      query.where['default'] = active;
+    }
+
+    return entityManager.findOne(Menu, query);
+  }
+
+  async findInSite(siteId: number, active?: boolean, relations = [], entityManager = this.repo.manager) {
+    const query = {
+      where: {
+        location: { siteId }, // Assuming Menu has a relation to Location, which has a relation to Site
+      },
+      relations,
+    };
+
+    if (active !== undefined && active !== null) {
+      query.where['default'] = active;
+    }
+
+    return entityManager.find(Menu, query);
   }
 }

@@ -20,6 +20,6 @@ export class MenuResolver {
 
   @Query((_) => Menu, { nullable: true })
   async coreMenu(@FieldMap() fieldMap, @Args() { menuId }: ArgsMenuById) {
-    return this.menuService.findOneById(menuId, this.projection.menus(fieldMap));
+    return this.menuService.findOneById(menuId, null, this.projection.menus(fieldMap));
   }
 }

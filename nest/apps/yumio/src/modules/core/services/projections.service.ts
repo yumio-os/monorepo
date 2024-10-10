@@ -191,6 +191,8 @@ export class ProjectionService {
     }
     // this.detectLoop(map, `stock`);
 
+    this._check(obj, relations, map, prefix, cnt, limit, `tagMenu`, this.tagsMenu.bind(this));
+
     return relations;
   }
 
@@ -201,6 +203,7 @@ export class ProjectionService {
     // this.detectLoop(map, `stock`);
 
     this._check(obj, relations, map, prefix, cnt, limit, `tag`, this.tags.bind(this));
+    this._check(obj, relations, map, prefix, cnt, limit, `menu`, this.menus.bind(this));
     this._check(obj, relations, map, prefix, cnt, limit, `menuItems`, this.itemsMenu.bind(this));
 
     return relations;

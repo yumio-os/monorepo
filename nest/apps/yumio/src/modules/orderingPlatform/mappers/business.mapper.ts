@@ -15,6 +15,7 @@ export function mapCoreBusinessToOp(cBusiness: Business): OPBusiness {
   target.id = cBusiness.id;
   target.name = cBusiness.name;
   target.shortName = cBusiness.shortName;
+  target.images = cBusiness.images;
 
   return target;
 }

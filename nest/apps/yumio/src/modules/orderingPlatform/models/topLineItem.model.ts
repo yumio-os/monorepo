@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { ItemDiscountSettings, ItemImages, TagMenu, TaxSettings } from '@yumio/modules/core';
+import { ItemDiscountSettings, ItemImages, TagType, TaxSettings } from '@yumio/modules/core';
 
 @ObjectType()
 export class OPBrand {
@@ -26,6 +26,9 @@ export class OPBusiness {
 
   @Field((_) => String)
   shortName: string;
+
+  @Field((_) => ItemImages, { nullable: true })
+  images?: ItemImages;
 }
 
 @ObjectType()
@@ -119,8 +122,8 @@ export class OPTopLineItem {
   @Field((_) => OPStockLevel, { nullable: true })
   stock: OPStockLevel;
 
-  @Field((_) => [TagMenu], { defaultValue: [] })
-  tags: TagMenu[];
+  @Field((_) => [OPTagMenu], { defaultValue: [] })
+  tags: OPTagMenu[];
 
   @Field((_) => TaxSettings, { nullable: true })
   tax: TaxSettings;
@@ -169,4 +172,28 @@ export class OPTag {
 
   @Field((_) => String)
   name: string;
+
+  @Field((_) => ItemImages, { nullable: true })
+  images?: ItemImages;
+
+  @Field((_) => TagType)
+  type?: TagType;
+}
+
+@ObjectType()
+export class OPTagMenu {
+  @Field((_) => Int)
+  id: number;
+
+  @Field((_) => String)
+  name: string;
+
+  @Field((_) => OPTag)
+  tag: OPTag;
+
+  @Field((_) => ItemImages, { nullable: true })
+  images?: ItemImages;
+
+  @Field((_) => Int, { defaultValue: 0 })
+  position?: number;
 }
