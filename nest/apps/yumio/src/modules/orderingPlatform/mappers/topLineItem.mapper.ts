@@ -2,8 +2,13 @@ import { BusinessBaseItem, MenuBaseItem } from '@yumio/modules/core';
 
 import { OPBusinessBaseItem, OPTopLineItem } from '../models/topLineItem.model';
 import { mapCoreStockLevelToOp } from './stock.mapper';
+import { mapCoreTagMenusToOp } from './tag.mapper';
 
-export function mapCoreMenuBaseItemToTopItem(item: MenuBaseItem) {
+export function mapCoreMenuBaseItemToTopItem(item?: MenuBaseItem) {
+  if (item == null) {
+    return null;
+  }
+
   const target = new OPTopLineItem();
 
   target.id = item.id;
@@ -15,7 +20,7 @@ export function mapCoreMenuBaseItemToTopItem(item: MenuBaseItem) {
   target.name = item.name;
   target.position = item.position ?? 0;
   target.price = item.price;
-  target.tags = item.tags; // todo <<<<<<<<<<<<<<<<<<<<<<<<<
+  target.tags = mapCoreTagMenusToOp(item.tags);
   target.tax = item.tax;
 
   target.businessBaseItem = mapCoreBusinessItemToOPBusinessBaseItem(item.businessBaseItem);
@@ -26,11 +31,15 @@ export function mapCoreMenuBaseItemToTopItem(item: MenuBaseItem) {
   return target;
 }
 
-export function mapCoreMenuBaseItemsToTopItem(items: MenuBaseItem[]) {
+export function mapCoreMenuBaseItemsToTopItem(items?: MenuBaseItem[]) {
   return items?.map?.((item) => mapCoreMenuBaseItemToTopItem(item)) ?? [];
 }
 
-export function mapCoreBusinessItemToOPBusinessBaseItem(item: BusinessBaseItem) {
+export function mapCoreBusinessItemToOPBusinessBaseItem(item?: BusinessBaseItem) {
+  if (item == null) {
+    return null;
+  }
+
   const target = new OPBusinessBaseItem();
 
   target.id = item.id;

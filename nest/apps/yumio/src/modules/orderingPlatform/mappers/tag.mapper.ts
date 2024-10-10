@@ -15,6 +15,7 @@ export function mapCoreTagToOp(cTag: Tag): OPTag {
   target.id = cTag.id;
   target.name = cTag.name;
   target.images = cTag.images;
+  target.type = cTag.type;
 
   return target;
 }
@@ -35,6 +36,7 @@ export function mapCoreTagMenuToOp(cTagMenu: TagMenu): OPTagMenu {
   target.name = cTagMenu.name;
   target.tag = mapCoreTagToOp(cTagMenu.tag);
   target.images = cTagMenu.images;
+  target.position = cTagMenu.position;
 
   return target;
 }

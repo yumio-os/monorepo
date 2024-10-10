@@ -48,6 +48,7 @@ import { TagService } from './services/tag.service';
     MenuService,
     MenuBaseItemService,
     TagService,
+    ProjectionService,
   ],
   providers: [
     SiteResolver,
