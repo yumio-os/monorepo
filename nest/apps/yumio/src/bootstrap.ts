@@ -6,7 +6,6 @@ import { LogLevel } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
-import { NewrelicInterceptor } from './internal/logger/newrelic.interceptor';
 import { createWinstonLogger } from './internal/logger/winston.logger';
 
 export async function bootstrap(path?: string) {
@@ -14,7 +13,7 @@ export async function bootstrap(path?: string) {
 
   // create winston logger
   const logLevel = process.env.LOG_LEVEL ?? 'info';
-  const logDepth = +process.env.LOG_DEPTH ?? 4;
+  const logDepth = +(process.env.LOG_DEPTH ?? 4);
 
   // default Nest Logger
   const defaultNestLogger: LogLevel[] = ['error', 'warn', 'log', 'verbose'];
@@ -48,10 +47,6 @@ export async function bootstrap(path?: string) {
       },
     }),
   );
-  // Enabled new relic interceptor
-  if (process.env.ACTIVE_PROFILE != 'test') {
-    app.useGlobalInterceptors(new NewrelicInterceptor());
-  }
 
   app.use(compression());
 

@@ -6,17 +6,11 @@ import {
   ApolloServerPluginLandingPageLocalDefault,
   ApolloServerPluginLandingPageProductionDefault,
 } from '@apollo/server/plugin/landingPage/default';
-import {
-  ApolloDriver,
-  ApolloDriverConfig,
-} from '@nestjs/apollo';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import {
-  IContextHttp,
-  IContextSocket,
-} from './common/model/context';
+import { IContextHttp, IContextSocket } from './common/model/context';
 import { LoggingPlugin } from './internal/apollo/LoggingPlugin';
 import { ComplexityPlugin } from './internal/complexity/complexityPlugin';
 
@@ -24,12 +18,6 @@ const isProd = process.env.ACTIVE_PROFILE == 'production' || process.env.ACTIVE_
 const plugins = [];
 plugins.push(new LoggingPlugin());
 plugins.push(new ComplexityPlugin());
-
-let relicPlugin;
-if (process.env.NEW_RELIC_APP_NAME && process.env.NEW_RELIC_LICENSE_KEY) {
-  relicPlugin = require('@newrelic/apollo-server-plugin');
-  plugins.push(relicPlugin);
-}
 
 if (isProd) {
   plugins.push(ApolloServerPluginLandingPageProductionDefault());
@@ -45,8 +33,7 @@ export const apolloConfigFactory = async (configService: ConfigService) =>
       credentials: true,
     },
     headers: {
-      'Content-Security-Policy':
-        "default-src 'self' https://embeddable-sandbox.cdn.apollographql.com/;",
+      'Content-Security-Policy': "default-src 'self' https://embeddable-sandbox.cdn.apollographql.com/;",
     },
     debug: !isProd,
     playground: false,
@@ -191,31 +178,15 @@ export interface IJWT {
 
 function socketContextCreation(ref, req = null) {
   const jwt: string =
-    ref?.AUTHORIZATION?.split?.(' ')?.[1] ||
-    ref?.authorization?.split?.(' ')?.[1] ||
-    ref?.Authorization?.split?.(' ')?.[1] ||
-    '';
+    ref?.AUTHORIZATION?.split?.(' ')?.[1] || ref?.authorization?.split?.(' ')?.[1] || ref?.Authorization?.split?.(' ')?.[1] || '';
 
   const deviceId = String(ref?.device || ref.Device || ref.DEVICE || '');
-  const userSessionId = String(
-    ref?.user_session_id || ref?.User_Session_Id || ref?.USER_SESSION_ID || '',
-  );
+  const userSessionId = String(ref?.user_session_id || ref?.User_Session_Id || ref?.USER_SESSION_ID || '');
   const timeZone = String(ref?.Timezone || ref?.TIMEZONE || ref?.timezone || '');
-  const serviceAreaId = Number(
-    ref?.service_area_id || ref?.Service_Area_Id || ref?.SERVICE_AREA_ID || 0,
-  );
-  const firebaseDeviceId = String(
-    ref?.device_id_firebase || ref?.Device_Id_Firebase || ref?.DEVICE_ID_FIREBASE || '',
-  );
+  const serviceAreaId = Number(ref?.service_area_id || ref?.Service_Area_Id || ref?.SERVICE_AREA_ID || 0);
+  const firebaseDeviceId = String(ref?.device_id_firebase || ref?.Device_Id_Firebase || ref?.DEVICE_ID_FIREBASE || '');
   const apiKey = String(
-    ref?.['Api-key'] ||
-      ref?.['api-key'] ||
-      ref?.['API-KEY'] ||
-      ref?.['Api-Key'] ||
-      ref?.api_key ||
-      ref?.Api_Key ||
-      ref?.API_KEY ||
-      '',
+    ref?.['Api-key'] || ref?.['api-key'] || ref?.['API-KEY'] || ref?.['Api-Key'] || ref?.api_key || ref?.Api_Key || ref?.API_KEY || '',
   );
 
   const locale = (ref.locales || ref.Locales || ref.Locales)?.split?.('|') ?? [];
