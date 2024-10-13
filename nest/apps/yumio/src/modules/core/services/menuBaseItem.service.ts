@@ -56,6 +56,14 @@ export class MenuBaseItemService {
     query.pagination = pagination;
   }
 
+  private excludeFromTop() {
+    return {
+      businessBaseItem: {
+        excludeFromTop: false,
+      },
+    };
+  }
+
   findOneById(id: number, relations = [], entityManager = this.repo.manager) {
     return entityManager.findOne(MenuBaseItem, { where: { id }, relations });
   }
@@ -66,6 +74,7 @@ export class MenuBaseItemService {
       menu: {
         location: { siteId }, // Assuming Menu is related to Location and Location is related to Site
       },
+      ...this.excludeFromTop(),
     };
   }
 
@@ -98,6 +107,7 @@ export class MenuBaseItemService {
       menu: {
         locationId, // Assuming Menu is related to Location and Location is related to Site
       },
+      ...this.excludeFromTop(),
     };
   }
 
@@ -128,6 +138,7 @@ export class MenuBaseItemService {
   private findInMenuWhere(menuId: number) {
     return {
       menuId,
+      ...this.excludeFromTop(),
     };
   }
 
@@ -162,6 +173,7 @@ export class MenuBaseItemService {
       },
       businessBaseItem: {
         brandId,
+        excludeFromTop: false,
       },
     };
   }
@@ -205,6 +217,7 @@ export class MenuBaseItemService {
       tags: {
         id: menuTagId, // Filter by tag, no matter the tag type
       },
+      ...this.excludeFromTop(),
     };
   }
 
@@ -246,6 +259,7 @@ export class MenuBaseItemService {
       },
       businessBaseItem: {
         brandId,
+        excludeFromTop: false,
       },
       tags: {
         id: menuTagId, // Filter by tag, no matter the tag type
@@ -297,6 +311,7 @@ export class MenuBaseItemService {
       tags: {
         id: menuTagId, // Filter by tag, no matter the tag type
       },
+      ...this.excludeFromTop(),
     };
   }
 
@@ -339,6 +354,7 @@ export class MenuBaseItemService {
       tags: {
         id: menuTagId, // Filter by tag, no matter the tag type
       },
+      ...this.excludeFromTop(),
     };
   }
 

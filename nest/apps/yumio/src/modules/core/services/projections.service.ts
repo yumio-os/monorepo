@@ -35,6 +35,18 @@ export class ProjectionService {
     relationMap[key]++;
   }
 
+  removePrefix(fieldMap: any, prefix: string): any {
+    if (!fieldMap) {
+      return fieldMap;
+    }
+
+    if (fieldMap[prefix]) {
+      return fieldMap[prefix];
+    }
+
+    return fieldMap;
+  }
+
   // detectNestingLimit(cnt, limit) {
   //   if (cnt >= limit) {
   //     throw new Error(`Query above the nesting limit ${cnt} >= ${limit}`);

@@ -1,0 +1,31 @@
+.CustomImgContainer {
+  height: 150px; /* Set a fixed height for the image container */
+}
+
+.CustomCardImageContainer {
+  height: 150px; /* Set a fixed height for the image container */
+}
+
+.CustomCardIconContainer {
+  height: 50px; /* Set a fixed height for the image container */
+}
+
+.CustomImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image covers the entire container, adjusting aspect ratio */
+}
+
+@media (min-width: 992px) {
+  .CustomImgContainer {
+    height: 150px; /* Larger height for bigger screens */
+  }
+
+  .CustomCardImageContainer {
+    height: 300px;
+  }
+
+  .CustomCardIconContainer {
+    height: 150px; /* Set a fixed height for the image container */
+  }
+}

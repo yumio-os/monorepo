@@ -8,7 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "build:all": "npm run build:libs:all && npm run build:apps:all",
+    "build:all": "npm run build:libs:all && npm run build:apps:all && npx graphql-codegen",
     "build:libs:all": "nest build common && nest build modules",
     "build:libs:all:watch": "nodemon",
     "build:apps:all": "npm run prebuild && npm run build:libs:all && npm run build:apps:yumio",

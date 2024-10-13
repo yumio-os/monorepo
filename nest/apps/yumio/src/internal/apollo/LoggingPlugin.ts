@@ -146,6 +146,7 @@ export class LoggingPlugin implements ApolloServerPlugin<any> {
           executionTimeInMs,
           executionTimeDisplayText,
           executionComplexity: calculateAdjustedComplexity(executionTimeInMs, headers['complexity']),
+          query: reqCtx.request.query,
         };
 
         resReqCtx.response.http.headers.set('X-GraphQL-Complexity', String(headers['complexity']));

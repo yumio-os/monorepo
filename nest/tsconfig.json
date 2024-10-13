@@ -23,7 +23,7 @@
     // THIS IS STUPID BUT VSCODE GOES BONKERS WITHOUT THIS ONE
     "jsx": "preserve",
     // this breaks the admin - decided to stick to header /** @jsxImportSource solid-js */ in files
-    // "jsxImportSource": "solid-js",
+    "jsxImportSource": "solid-js",
     "paths": {
       "@yumio/common": ["dist/libs/common/"],
       "@yumio/common/*": ["dist/libs/common/*"],

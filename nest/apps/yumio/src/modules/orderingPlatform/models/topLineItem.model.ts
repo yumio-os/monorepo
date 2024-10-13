@@ -45,6 +45,12 @@ export class OPSite {
 
   @Field((_) => ItemImages, { nullable: true })
   images?: ItemImages;
+
+  @Field((_) => String)
+  currencyCode: string;
+
+  @Field((_) => String)
+  currencySymbol: string;
 }
 
 @ObjectType()

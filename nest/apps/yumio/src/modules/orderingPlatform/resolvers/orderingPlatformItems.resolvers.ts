@@ -1,7 +1,6 @@
 import { Args, ArgsType, Field, Int, Query, Resolver } from '@nestjs/graphql';
 import { FieldMap } from '@yumio/common/decorators';
 import { DefaultPagiValue, Pagination, PaginationMeta } from '@yumio/common/pagination';
-import { TagType } from '@yumio/modules/core';
 
 import { MenuBaseItemService } from '../../core/services/menuBaseItem.service';
 import { ProjectionService } from '../../core/services/projections.service';
@@ -18,20 +17,11 @@ class ArgsItemsBySiteId {
 }
 
 @ArgsType()
-class ArgsTagBySiteId {
-  @Field((_) => Int)
-  siteId: number;
-
-  @Field((_) => TagType, { nullable: true })
-  type?: TagType;
-}
-
-@ArgsType()
 class ArgsItemsByLocationId {
   @Field((_) => Int)
   locationId: number;
 
-  @Field((_) => Pagination, { defaultValue: DefaultPagiValue() })
+  @Field((_) => Pagination, { defaultValue: DefaultPagiValue(), nullable: true })
   pagination: Pagination;
 }
 
@@ -40,7 +30,7 @@ class ArgsItemsByMenuId {
   @Field((_) => Int)
   menuId: number;
 
-  @Field((_) => Pagination, { defaultValue: DefaultPagiValue() })
+  @Field((_) => Pagination, { defaultValue: DefaultPagiValue(), nullable: true })
   pagination: Pagination;
 }
 
@@ -52,7 +42,7 @@ class ArgsItemsBySiteIdAndBrandId {
   @Field((_) => Int)
   brandId: number;
 
-  @Field((_) => Pagination, { defaultValue: DefaultPagiValue() })
+  @Field((_) => Pagination, { defaultValue: DefaultPagiValue(), nullable: true })
   pagination: Pagination;
 }
 
@@ -67,7 +57,7 @@ class ArgsItemsBySiteIdAndBrandIdAndMenuTagId {
   @Field((_) => Int)
   tagMenuId: number;
 
-  @Field((_) => Pagination, { defaultValue: DefaultPagiValue() })
+  @Field((_) => Pagination, { defaultValue: DefaultPagiValue(), nullable: true })
   pagination: Pagination;
 }
 
@@ -79,7 +69,7 @@ class ArgsItemsBySiteIdAndMenuTagId {
   @Field((_) => Int)
   tagMenuId: number;
 
-  @Field((_) => Pagination, { defaultValue: DefaultPagiValue() })
+  @Field((_) => Pagination, { defaultValue: DefaultPagiValue(), nullable: true })
   pagination: Pagination;
 }
 
@@ -91,7 +81,7 @@ class ArgsItemsByMenuAndTagMenu {
   @Field((_) => Int)
   menuId: number;
 
-  @Field((_) => Pagination, { defaultValue: DefaultPagiValue() })
+  @Field((_) => Pagination, { defaultValue: DefaultPagiValue(), nullable: true })
   pagination: Pagination;
 }
 
@@ -103,7 +93,7 @@ class ArgsItemsByLocationAndTagMenu {
   @Field((_) => Int)
   locationId: number;
 
-  @Field((_) => Pagination, { defaultValue: DefaultPagiValue() })
+  @Field((_) => Pagination, { defaultValue: DefaultPagiValue(), nullable: true })
   pagination: Pagination;
 }
 
@@ -128,6 +118,7 @@ export class OrderingPlatformItemsResolver {
   @Query((_) => OPTopLineItemsWithPagination)
   async opItemsInSite(@FieldMap() fieldMap, @Args() { siteId, pagination }: ArgsItemsBySiteId): Promise<OPTopLineItemsWithPagination> {
     const response = new OPTopLineItemsWithPagination();
+    fieldMap = this.projection.removePrefix(fieldMap, 'items');
 
     await Promise.all([
       (async () => {
@@ -149,6 +140,7 @@ export class OrderingPlatformItemsResolver {
     @Args() { locationId, pagination }: ArgsItemsByLocationId,
   ): Promise<OPTopLineItemsWithPagination> {
     const response = new OPTopLineItemsWithPagination();
+    fieldMap = this.projection.removePrefix(fieldMap, 'items');
 
     await Promise.all([
       (async () => {
@@ -170,6 +162,7 @@ export class OrderingPlatformItemsResolver {
     @Args() { menuId, pagination }: ArgsItemsByMenuId,
   ): Promise<OPTopLineItemsWithPagination> {
     const response = new OPTopLineItemsWithPagination();
+    fieldMap = this.projection.removePrefix(fieldMap, 'items');
 
     await Promise.all([
       (async () => {
@@ -188,6 +181,7 @@ export class OrderingPlatformItemsResolver {
   @Query((_) => OPTopLineItemsWithPagination) //
   async opItemsInMenu(@FieldMap() fieldMap, @Args() { menuId, pagination }: ArgsItemsByMenuId): Promise<OPTopLineItemsWithPagination> {
     const response = new OPTopLineItemsWithPagination();
+    fieldMap = this.projection.removePrefix(fieldMap, 'items');
 
     await Promise.all([
       (async () => {
@@ -209,6 +203,7 @@ export class OrderingPlatformItemsResolver {
     @Args() { brandId, siteId, pagination }: ArgsItemsBySiteIdAndBrandId,
   ): Promise<OPTopLineItemsWithPagination> {
     const response = new OPTopLineItemsWithPagination();
+    fieldMap = this.projection.removePrefix(fieldMap, 'items');
 
     await Promise.all([
       (async () => {
@@ -236,6 +231,7 @@ export class OrderingPlatformItemsResolver {
     @Args() { tagMenuId, siteId, pagination }: ArgsItemsBySiteIdAndMenuTagId,
   ): Promise<OPTopLineItemsWithPagination> {
     const response = new OPTopLineItemsWithPagination();
+    fieldMap = this.projection.removePrefix(fieldMap, 'items');
 
     await Promise.all([
       (async () => {
@@ -263,6 +259,7 @@ export class OrderingPlatformItemsResolver {
     @Args() { brandId, siteId, tagMenuId, pagination }: ArgsItemsBySiteIdAndBrandIdAndMenuTagId,
   ): Promise<OPTopLineItemsWithPagination> {
     const response = new OPTopLineItemsWithPagination();
+    fieldMap = this.projection.removePrefix(fieldMap, 'items');
 
     await Promise.all([
       (async () => {
@@ -291,6 +288,7 @@ export class OrderingPlatformItemsResolver {
     @Args() { menuId, tagMenuId, pagination }: ArgsItemsByMenuAndTagMenu,
   ): Promise<OPTopLineItemsWithPagination> {
     const response = new OPTopLineItemsWithPagination();
+    fieldMap = this.projection.removePrefix(fieldMap, 'items');
 
     await Promise.all([
       (async () => {
@@ -318,6 +316,7 @@ export class OrderingPlatformItemsResolver {
     @Args() { locationId, tagMenuId, pagination }: ArgsItemsByLocationAndTagMenu,
   ): Promise<OPTopLineItemsWithPagination> {
     const response = new OPTopLineItemsWithPagination();
+    fieldMap = this.projection.removePrefix(fieldMap, 'items');
 
     await Promise.all([
       (async () => {

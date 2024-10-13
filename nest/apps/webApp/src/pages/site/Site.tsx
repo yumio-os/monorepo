@@ -1,4 +1,4 @@
-import { Component, createEffect, createSignal, JSXElement, onMount } from 'solid-js';
+import { Component, createEffect, createSignal, For, JSXElement, onMount } from 'solid-js';
 import { render } from 'solid-js/web';
 
 import { ApolloProvider, useApollo } from '../../providers/apollo/Apollo';
@@ -78,7 +78,7 @@ const Site: Component = (): JSXElement => {
         {/* Check if siteData exists */}
         {siteData() && (
           <div class="card text-center container-fluid p-0">
-            <div class={`card-img-top overflow-hidden position-relative ${styles.CustomImgContainer}`} alt={siteData().name}>
+            <div class={`card-img-top overflow-hidden position-relative ${styles.CustomImgContainer}`} title={siteData().name}>
               <img
                 src={siteData().images.default || 'https://via.placeholder.com/150'}
                 class={`img-fluid ${styles.CustomImg}`}

@@ -1,5 +1,20 @@
 import { gql } from '@apollo/client';
 
+const SingleOpSite = gql`
+  query SingleOpSite($siteId: Int!) {
+    opSite(siteId: $siteId) {
+      id
+      name
+      shortName
+      images {
+        default
+      }
+      currencyCode
+      currencySymbol
+    }
+  }
+`;
+
 const fullSiteQuery = gql`
   query OpSite($siteId: Int!, $typeCollection: TagType, $typeCategory: TagType) {
     opSite(siteId: $siteId) {
@@ -9,6 +24,8 @@ const fullSiteQuery = gql`
       images {
         default
       }
+      currencyCode
+      currencySymbol
     }
     opSiteBrands(siteId: $siteId) {
       id

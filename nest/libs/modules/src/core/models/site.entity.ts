@@ -28,4 +28,12 @@ export class Site extends BaseEntity {
   @Field((_) => ItemImages, { nullable: true })
   @Column({ type: 'jsonb', nullable: true })
   images?: ItemImages;
+
+  @Field((_) => String)
+  @Column({ length: 3 })
+  currencyCode: string;
+
+  @Field((_) => String)
+  @Column({ length: 3 })
+  currencySymbol: string;
 }

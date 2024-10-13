@@ -58,6 +58,8 @@ type Site {
   name: String!
   shortName: String!
   images: ItemImages
+  currencyCode: String!
+  currencySymbol: String!
 }
 
 type TaxSettings {
@@ -304,6 +306,8 @@ type OPSite {
   name: String!
   shortName: String!
   images: ItemImages
+  currencyCode: String!
+  currencySymbol: String!
 }
 
 type OPBusinessBaseItem {
@@ -384,14 +388,14 @@ type Query {
   opSiteTags(siteId: Int!, type: TagType): [OPTag!]!
   opSiteMenuTags(siteId: Int!, type: TagType): [OPTagMenu!]!
   opItemsInSite(siteId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!
-  opItemsInLocation(locationId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!
-  opItemsInActiveMenu(menuId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!
-  opItemsInMenu(menuId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!
-  opItemsInSiteForBrand(siteId: Int!, brandId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!
-  opItemsInSiteForCollection(siteId: Int!, tagMenuId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!
-  opItemsInSiteBrandForCollection(siteId: Int!, brandId: Int!, tagMenuId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!
-  opItemsInMenuForCollection(tagMenuId: Int!, menuId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!
-  opItemsInLocationForCollection(tagMenuId: Int!, locationId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!
+  opItemsInLocation(locationId: Int!, pagination: Pagination = {size: 10, page: 1}): OPTopLineItemsWithPagination!
+  opItemsInActiveMenu(menuId: Int!, pagination: Pagination = {size: 10, page: 1}): OPTopLineItemsWithPagination!
+  opItemsInMenu(menuId: Int!, pagination: Pagination = {size: 10, page: 1}): OPTopLineItemsWithPagination!
+  opItemsInSiteForBrand(siteId: Int!, brandId: Int!, pagination: Pagination = {size: 10, page: 1}): OPTopLineItemsWithPagination!
+  opItemsInSiteForCollection(siteId: Int!, tagMenuId: Int!, pagination: Pagination = {size: 10, page: 1}): OPTopLineItemsWithPagination!
+  opItemsInSiteBrandForCollection(siteId: Int!, brandId: Int!, tagMenuId: Int!, pagination: Pagination = {size: 10, page: 1}): OPTopLineItemsWithPagination!
+  opItemsInMenuForCollection(tagMenuId: Int!, menuId: Int!, pagination: Pagination = {size: 10, page: 1}): OPTopLineItemsWithPagination!
+  opItemsInLocationForCollection(tagMenuId: Int!, locationId: Int!, pagination: Pagination = {size: 10, page: 1}): OPTopLineItemsWithPagination!
 }
 
 input Pagination {

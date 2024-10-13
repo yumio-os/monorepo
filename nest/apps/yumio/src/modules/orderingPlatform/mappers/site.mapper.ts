@@ -12,6 +12,8 @@ export function mapCoreSiteToOp(cSite: Site) {
   target.name = cSite.name;
   target.shortName = cSite.shortName;
   target.images = cSite.images;
+  target.currencyCode = cSite.currencyCode;
+  target.currencySymbol = cSite.currencySymbol;
 
   return target;
 }

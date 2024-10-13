@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'solid-js';
+import { createContext, JSX, useContext } from 'solid-js';
 
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 

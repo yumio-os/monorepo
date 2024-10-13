@@ -1,16 +1,7 @@
 import { ConfigService } from '@nestjs/config';
-import {
-  Context,
-  Field,
-  ObjectType,
-  Query,
-  Resolver,
-} from '@nestjs/graphql';
+import { Context, Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
 
-import {
-  name,
-  version,
-} from '../../../package.json';
+import { name, version } from '../../../package.json';
 import { IContext } from './common/model/context';
 
 @ObjectType()
