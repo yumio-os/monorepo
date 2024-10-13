@@ -7,6 +7,7 @@ import { AuthModule } from '../auth/auth.module';
 import { CacheModule } from '../cache/cache.module';
 import { CoreModule } from '../core/core.module';
 import { OrderingPlatformResolver } from './resolvers/orderingPlatform.resolvers';
+import { OrderingPlatformItemsResolver } from './resolvers/orderingPlatformItems.resolvers';
 
 @Module({
   imports: [
@@ -17,8 +18,8 @@ import { OrderingPlatformResolver } from './resolvers/orderingPlatform.resolvers
     forwardRef(() => PubSubModule),
     forwardRef(() => CoreModule),
   ],
-  exports: [OrderingPlatformResolver],
-  providers: [OrderingPlatformResolver],
+  exports: [OrderingPlatformResolver, OrderingPlatformItemsResolver],
+  providers: [OrderingPlatformResolver, OrderingPlatformItemsResolver],
   controllers: [],
 })
 export class OrderingPlatformModule {}

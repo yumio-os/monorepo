@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { PaginationMeta } from '@yumio/common/pagination';
 import { ItemDiscountSettings, ItemImages, TagType, TaxSettings } from '@yumio/modules/core';
 
 @ObjectType()
@@ -77,6 +78,15 @@ export class OPStockLevel {
 
   @Field((_) => Int)
   amount: number;
+}
+
+@ObjectType()
+export class OPTopLineItemsWithPagination {
+  @Field((_) => [OPTopLineItem])
+  items: OPTopLineItem[];
+
+  @Field((_) => PaginationMeta)
+  pagination: PaginationMeta;
 }
 
 @ObjectType()
