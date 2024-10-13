@@ -29,8 +29,7 @@ COPY --from=build-env src/node_modules src/node_modules
 
 WORKDIR /src
 
-# CMD ["node", "--experimental-loader newrelic/esm-loader.mjs", "-r dotenv/config",  "-r newrelic", "main.js"]
 # try to load new relic without the experimental loader
-CMD ["node", "-r", "dotenv/config",  "-r", "newrelic", "main.js", "--insecure-http-parser"]
+CMD ["node", "-r", "dotenv/config",  "main.js", "--insecure-http-parser"]
 
 EXPOSE 4000

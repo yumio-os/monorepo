@@ -3,12 +3,6 @@ import { format } from 'winston';
 
 const winston = require('winston');
 
-let newrelicFormatter, newrelicWinstonFormatter;
-if (process.env.NEW_RELIC_APP_NAME && process.env.NEW_RELIC_LICENSE_KEY) {
-  newrelicFormatter = require('@newrelic/winston-enricher');
-  newrelicWinstonFormatter = newrelicFormatter(winston);
-}
-
 const util = require('util');
 
 export function createWinstonLogger(logLevel = 'info', logDepth = 5) {
@@ -27,10 +21,6 @@ export function createWinstonLogger(logLevel = 'info', logDepth = 5) {
       format.timestamp(),
       format.errors({ stack: true }),
       format.printf((log) => {
-        // object 'log' will be forwared to newrelic logging as a whole object
-        // log.message - 1st argument
-        // log.context - 2nd argument
-
         // save timestamp in ISO format because it will be overwritten in ms
         log.timestamp_ISO = log.timestamp;
 
@@ -89,20 +79,13 @@ export function createWinstonLogger(logLevel = 'info', logDepth = 5) {
         inspectLog = util.inspect(logFromEntries, {
           showHidden: false,
           depth: displayFullLog ? 7 : 5, // ignore the log depth for now
-          colors:
-            process.env.ACTIVE_PROFILE == 'dev' || process.env.ACTIVE_PROFILE == 'local'
-              ? true
-              : false,
+          colors: process.env.ACTIVE_PROFILE == 'dev' || process.env.ACTIVE_PROFILE == 'local' ? true : false,
         });
 
         // log only simple one liner for 'info' logs
         // full log object will be forwarded to newrelic regardless
         if (process.env.ACTIVE_PROFILE == 'dev' || process.env.ACTIVE_PROFILE == 'local') {
-          console.log(
-            `${timestampDisplay} ${levelDisplay}${contextDisplay} - ${messageDisplay} ${
-              inspectLog ? inspectLog : ''
-            }`
-          );
+          console.log(`${timestampDisplay} ${levelDisplay}${contextDisplay} - ${messageDisplay} ${inspectLog ? inspectLog : ''}`);
         } else if (process.env.ACTIVE_PROFILE == 'test') {
           console.log(`${messageDisplay} - ${inspectLog ? inspectLog : ''}`);
         } else {
@@ -115,16 +98,11 @@ export function createWinstonLogger(logLevel = 'info', logDepth = 5) {
           };
           console.log(JSON.stringify(logObject));
         }
-
         // return empty string because we use default console.log directly
         return '';
         // return `${timestamp} ${level}${contextText} - ${messageText}`;
       }),
-
-      // using Winstong and newrelic formatter to correctly forward logs to newrelic
-      newrelicWinstonFormatter
-        ? newrelicWinstonFormatter() // is optional, because it possibly can be not be initialized
-        : format.printf((_) => '') // have to pass some dummy format function for it work
+      format.printf((_) => ''), // have to pass some dummy format function for it work
     ),
     transports: [
       // we don't use console transport because we directly use console.log
