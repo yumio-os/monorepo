@@ -19,6 +19,8 @@
   "[go]": {
     "editor.defaultFormatter": "golang.go"
   },
+  "eslint.workingDirectories": ["./nest"],
+  "prettier.configPath": "./nest/.prettierrc",
   "files.exclude": {
     "**/.git": false,
     "**/.svn": false,

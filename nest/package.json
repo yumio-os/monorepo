@@ -17,6 +17,7 @@
     "build:apps:webApp": "vite --config apps/webApp/src/vite.config.ts build",
     "build:apps:webApp:watch": "nodemon --watch apps/webApp --ext tsx,json --exec \"vite --config apps/webApp/src/vite.config.ts build\"",
     "build:apps:yumio:watch": "nodemon --watch services/ --ext ts,json --exec \"npm run build:apps:yumio\"",
+    "codegen": "npx graphql-codegen",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start:apps:dev:yumio": "nest start yumio --watch",
     "start:apps:dev:admin": "nest start admin --watch",
@@ -40,6 +41,7 @@
     "@apollo/datasource-rest": "^6.2.2",
     "@apollo/server": "^4.10.2",
     "@apollo/utils.fetcher": "^3.1.0",
+    "@golevelup/nestjs-discovery": "^4.0.3",
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/typescript": "^4.0.9",
     "@graphql-codegen/typescript-operations": "^4.2.3",
@@ -54,6 +56,7 @@
     "@nestjs/microservices": "^10.4.4",
     "@nestjs/platform-express": "^10.4.4",
     "@nestjs/typeorm": "^10.0.2",
+    "@sendgrid/mail": "^8.1.4",
     "@vitejs/plugin-react": "^4.3.1",
     "adminjs": "^7.8.13",
     "amqplib": "^0.10.4",
@@ -69,6 +72,7 @@
     "graphql-redis-subscriptions": "^2.6.0",
     "graphql-subscriptions": "^2.0.0",
     "graphql-type-json": "^0.3.2",
+    "graphql-upload-ts": "^2.1.2",
     "graphql-ws": "^5.16.0",
     "helmet": "^7.1.0",
     "i": "^0.3.7",
@@ -119,6 +123,10 @@
     "typescript": "^5.4.5",
     "vite": "^5.0.11",
     "vite-plugin-solid": "^2.8.2"
+  },
+  "overrides": {
+    "esbuild": "0.25.0",
+    "tinymce": "7.7.0"
   },
   "jest": {
     "moduleFileExtensions": [

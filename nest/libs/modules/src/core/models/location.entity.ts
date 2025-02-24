@@ -23,11 +23,11 @@ export class Location extends BaseEntity {
   id: number;
 
   @Field((_) => String)
-  @Column({ length: 15 })
+  @Column({ length: 40 })
   name: string;
 
   @Field((_) => String)
-  @Column({ length: 7 })
+  @Column({ length: 20 })
   shortName: string;
 
   @Field((_) => TaxSettings, { nullable: true })

@@ -7,8 +7,8 @@ export interface IAppConfig {
   // PUBSUB: IPubSubTopicsConfig;
   // PUBLISHER: IPublusherTopicsConfig;
   TWILIO: ITwilioConfig;
+  SENDGRID: ISendgrid;
 }
-
 
 export interface ITwilioConfig {
   ACCOUNT_SID: string;
@@ -39,6 +39,10 @@ export interface IDBConfig {
   DATABASE: string;
   SYNCHRONIZE: boolean;
   LOGGING: boolean;
+}
+
+export interface ISendgrid {
+  API_KEY: string;
 }
 
 // export interface IPubSubTopicsConfig {

@@ -18,11 +18,11 @@ export class Site extends BaseEntity {
   locations: Location[];
 
   @Field((_) => String)
-  @Column({ length: 20 })
+  @Column({ length: 40 })
   name: string;
 
   @Field((_) => String)
-  @Column({ length: 7 })
+  @Column({ length: 15 })
   shortName: string;
 
   @Field((_) => ItemImages, { nullable: true })

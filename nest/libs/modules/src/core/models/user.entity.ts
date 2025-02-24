@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum UserRoles {
   admin = 'admin',
@@ -19,6 +19,13 @@ export class User extends BaseEntity {
   @Column()
   public password: string;
 
-  @Column()
-  public salt: string;
+  @Column({ type: 'int', nullable: true })
+  public salt: number;
+
+  @BeforeInsert()
+  checkSelt() {
+    if (!this.salt) {
+      this.salt = Math.floor(Math.random() * 1000000);
+    }
+  }
 }

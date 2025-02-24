@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { IAppConfig, IDBConfig, IRedisConfig } from '../config.interface';
+import { IAppConfig, IDBConfig, IRedisConfig, ISendgrid } from '../config.interface';
 
 export async function loadEnvVarConfig() {
   Logger.log(`Config loaded from ENV variables`, { context: 'ConfigLoader' });
@@ -34,6 +34,10 @@ export async function loadEnvVarConfig() {
   appConfig.REDIS.PASSWORD = process.env.REDIS_PASSWORD ?? '';
   appConfig.REDIS.NAMESPACE = process.env.REDIS_NAMESPACE ?? 'default';
   appConfig.REDIS.DB = +(process.env.REDIS_DB ?? 0);
+
+  // sendgrid
+  appConfig.SENDGRID = <ISendgrid>{};
+  appConfig.SENDGRID.API_KEY = process.env.SENDGRID_API_KEY ?? '';
 
   // twilio
   // appConfig.TWILIO = <ITwilioConfig>{};

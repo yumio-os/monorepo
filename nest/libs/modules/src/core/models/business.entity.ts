@@ -15,11 +15,11 @@ export class Business extends BaseEntity {
   id: number;
 
   @Field((_) => String)
-  @Column({ length: 20 })
+  @Column({ length: 40 })
   name: string;
 
   @Field((_) => String)
-  @Column({ length: 7 })
+  @Column({ length: 15 })
   shortName: string;
 
   // Many to many relationship to Brands

@@ -1,0 +1,54 @@
+.logoutItem:hover {
+  color: var(--bs-gray-400);
+  background: linear-gradient(to bottom, #09102c, var(--bs-gray-800));
+}
+
+.logoutItem a {
+  color: var(--bs-gray-500);
+}
+
+.logoutItem a:hover {
+  color: var(--bs-gray-400);
+}
+
+.logoutItem {
+  cursor: pointer;
+  color: var(--bs-gray-500);
+  background: linear-gradient(to bottom, #131622, var(--bs-gray-800));
+}
+
+/* ------------- navs */
+
+.mndLink {
+  cursor: pointer;
+  background: linear-gradient(to bottom, var(--bs-white), var(--bs-gray-100));
+}
+
+.mndLinkActive {
+  cursor: pointer;
+  background: linear-gradient(to bottom, var(--bs-gray-300), var(--bs-gray-300));
+}
+
+.mndLinkActive a {
+  color: var(--bs-gray-900);
+}
+
+.mndLinkActive a:hover {
+  color: var(--bs-gray-800);
+  background: linear-gradient(to bottom, var(--bs-gray-200), var(--bs-gray-300));
+}
+
+/* ---------------- logo */
+
+.mndLogo {
+  /* font-family: 'Bebas Neue';
+  font-size: 80px;
+  line-height: 60px; */
+
+  font-family: 'Akshar';
+  font-size: 30px;
+}
+
+.mndLogoBg {
+  background: linear-gradient(to bottom, #d3d3d3, #dfdfdf);
+}

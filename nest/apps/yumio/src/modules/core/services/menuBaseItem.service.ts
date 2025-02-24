@@ -1,9 +1,9 @@
 import { FindManyOptions, Repository } from 'typeorm';
 
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Pagination } from '@yumio/common/pagination';
 import { MenuBaseItem } from '@yumio/modules/core';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class MenuBaseItemService {
@@ -70,9 +70,10 @@ export class MenuBaseItemService {
   }
 
   findInSite(siteId: number, active?: boolean, relations = [], pagination?: Pagination, entityManager = this.repo.manager) {
-    const query = {
+    const query: FindManyOptions<MenuBaseItem> = {
       where: this.findInSiteWhere(siteId),
       relations,
+      order: { position: 1 },
     };
 
     this.fillWhereMenuActive(query, active);

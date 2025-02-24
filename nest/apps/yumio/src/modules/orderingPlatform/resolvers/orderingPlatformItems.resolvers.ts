@@ -1,5 +1,4 @@
 import { Args, ArgsType, Field, Int, Query, Resolver } from '@nestjs/graphql';
-import { FieldMap } from '@yumio/common/decorators';
 import { DefaultPagiValue, Pagination, PaginationMeta } from '@yumio/common/pagination';
 import { TagType } from '@yumio/modules/core';
 
@@ -7,13 +6,14 @@ import { MenuBaseItemService } from '../../core/services/menuBaseItem.service';
 import { ProjectionService } from '../../core/services/projections.service';
 import { mapCoreMenuBaseItemsToTopItem } from '../mappers/topLineItem.mapper';
 import { OPTopLineItemsWithPagination } from '../models/topLineItem.model';
+import { FieldMap } from '@yumio/common';
 
 @ArgsType()
 class ArgsItemsBySiteId {
   @Field((_) => Int)
   siteId: number;
 
-  @Field((_) => Pagination, { defaultValue: DefaultPagiValue() })
+  @Field((_) => Pagination, { defaultValue: DefaultPagiValue(), nullable: true })
   pagination: Pagination;
 }
 
@@ -128,6 +128,9 @@ export class OrderingPlatformItemsResolver {
   @Query((_) => OPTopLineItemsWithPagination)
   async opItemsInSite(@FieldMap() fieldMap, @Args() { siteId, pagination }: ArgsItemsBySiteId): Promise<OPTopLineItemsWithPagination> {
     const response = new OPTopLineItemsWithPagination();
+
+    // unwrap
+    fieldMap = this.projection.unwrap(fieldMap, ['items']);
 
     await Promise.all([
       (async () => {

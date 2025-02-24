@@ -144,6 +144,14 @@ export class ProjectionService {
     return relations;
   }
 
+  unwrap(obj, paths: string[]) {
+    let ref = obj;
+    for (const path of paths) {
+      ref = obj?.[path];
+    }
+    return ref;
+  }
+
   addons(obj, relations: string[] = [], map = {}, prefix = '', cnt = 0, limit = 10) {
     if (cnt >= limit) {
       return;

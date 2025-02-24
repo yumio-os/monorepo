@@ -1,8 +1,11 @@
-import { Accessor, createContext, createSignal, JSX, Setter, useContext } from 'solid-js';
+import { Accessor, createContext, createEffect, createSignal, JSX, Setter, useContext } from 'solid-js';
+
+// import { Admin } from '../apollo/gql';
 
 interface AuthState {
   isAuthenticated: boolean;
-  user: { name: string } | null;
+  user?: { role: any; id: number };
+  bearer?: string;
 }
 
 interface AuthContextValue {
@@ -13,8 +16,23 @@ interface AuthContextValue {
 // Create a context with a default value of undefined
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+// Key for localStorage
+const AUTH_STATE_KEY = 'authState';
+
 export function AuthProvider(props: { children: JSX.Element }): JSX.Element {
-  const [authState, setAuthState] = createSignal<AuthState>({ isAuthenticated: false, user: null });
+  // Initialize state from localStorage, or default to the initial state
+  const initialAuthState: AuthState = JSON.parse(localStorage.getItem(AUTH_STATE_KEY) || 'null') || {
+    isAuthenticated: false,
+    user: null,
+    bearer: null,
+  };
+
+  const [authState, setAuthState] = createSignal<AuthState>(initialAuthState);
+
+  // Update localStorage whenever the authState changes
+  createEffect(() => {
+    localStorage.setItem(AUTH_STATE_KEY, JSON.stringify(authState()));
+  });
 
   const value = {
     authState,

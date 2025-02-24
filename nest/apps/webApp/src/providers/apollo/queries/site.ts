@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-const fullSiteQuery = gql`
+export const fullSiteQuery = gql`
   query OpSite($siteId: Int!, $typeCollection: TagType, $typeCategory: TagType) {
     opSite(siteId: $siteId) {
       id
@@ -59,6 +59,137 @@ const fullSiteQuery = gql`
       }
       images {
         default
+      }
+    }
+  }
+`;
+
+export const opOneSite = gql`
+  query OpOneSite($siteId: Int!) {
+    opSite(siteId: $siteId) {
+      id
+      name
+      shortName
+      images {
+        default
+      }
+    }
+  }
+`;
+
+export const opOneSiteBrand = gql`
+  query OpOneSiteBrand($siteId: Int!) {
+    opSiteBrands(siteId: $siteId) {
+      id
+      name
+      shortName
+      images {
+        default
+      }
+    }
+  }
+`;
+
+export const opOneSiteBusiness = gql`
+  query OpOneSiteBusiness($siteId: Int!) {
+    opSiteBusiness(siteId: $siteId) {
+      id
+      name
+      shortName
+      images {
+        default
+      }
+    }
+  }
+`;
+
+export const opOneSiteTags = gql`
+  query OpOneSiteTags($siteId: Int!) {
+    opSiteTags(siteId: $siteId) {
+      id
+      name
+      images {
+        default
+      }
+    }
+  }
+`;
+
+export const opOneSiteMenuTagsCollection = gql`
+  query OpOneSiteMenuTagsCollection($siteId: Int!, $type: TagType) {
+    opSiteMenuTagsCollection: opSiteMenuTags(siteId: $siteId, type: $type) {
+      id
+      name
+      tag {
+        id
+        name
+        images {
+          default
+        }
+      }
+      images {
+        default
+      }
+    }
+  }
+`;
+
+export const opOneSiteMenuTagsCategory = gql`
+  query OpOneSiteMenuTagsCategory($siteId: Int!, $type: TagType) {
+    opSiteMenuTagsCategory: opSiteMenuTags(siteId: $siteId, type: $type) {
+      id
+      name
+      tag {
+        id
+        name
+        images {
+          default
+        }
+      }
+      images {
+        default
+      }
+    }
+  }
+`;
+
+export const opItemsInSite = gql`
+  query OpItemsInSite($siteId: Int!, $pagination: Pagination) {
+    opItemsInSite(siteId: $siteId, pagination: $pagination) {
+      pagination {
+        page
+        size
+        totalCount
+      }
+      items {
+        id
+        businessBaseItemId
+        menuId
+        hasAddons
+        name
+        images {
+          default
+          defaultLowRes
+          thumbnail
+          thumbnailLowRes
+        }
+        price
+        discount {
+          amount
+          amountPer
+          maxDiscount
+          maxDiscountPer
+        }
+        position
+        stock {
+          amount
+        }
+        businessBaseItem {
+          id
+          sku
+          brandId
+          businessId
+        }
       }
     }
   }

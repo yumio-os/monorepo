@@ -6,7 +6,7 @@ The core components of YumioOS are free and open-source, allowing anyone to set 
 
 ## Features
 
-### Core Features (Open Source - ALSO WORK IN PROGRESS),
+### Core Features (Open Source - WORK IN PROGRESS),
 
 - Menu Management
 - Site Management

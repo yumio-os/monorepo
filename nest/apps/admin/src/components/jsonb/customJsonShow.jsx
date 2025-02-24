@@ -1,42 +1,49 @@
 // src/adminjs/components/GenericJsonShow.jsx
-import React from 'react';
+import React, { useState } from 'react';
 
 import ReactJson from 'react-json-view';
 
 import { Box, Label } from '@adminjs/design-system';
 
-const GenericJsonShow = ({ record, property }) => {
+const GenericJsonShow = ({ record, property, onChange }) => {
+  // Reconstruct JSON from flattened structure
   const reconstructJson = (params) => {
     const result = {};
-
     Object.keys(params).forEach((fullKey) => {
       const nestedKeys = fullKey.split('.');
       let currentLevel = result;
 
-      // Iterate over each part of the key except the last one
       nestedKeys.slice(0, -1).forEach((key, index) => {
-        // Check if the next key is a number, suggesting an array
         if (!currentLevel[key]) {
           currentLevel[key] = isNaN(parseInt(nestedKeys[index + 1], 10)) ? {} : [];
         }
         currentLevel = currentLevel[key];
       });
 
-      // Set the value at the deepest level
       const lastKey = nestedKeys[nestedKeys.length - 1];
       currentLevel[lastKey] = params[fullKey];
     });
 
     return result;
   };
-  const fixedStruct = reconstructJson(record.params);
-  const formattedJson = fixedStruct[property.name];
 
-  //   return <pre style={{ background: '#f6f8fa', padding: '1em', borderRadius: '5px' }}>{formattedJson}</pre>;
+  const fixedStruct = reconstructJson(record.params);
+  const [jsonValue, setJsonValue] = useState(fixedStruct[property.name] || {});
+
+  s;
+
   return (
     <Box>
       <Label>{property.label}</Label>
-      <ReactJson src={formattedJson} />
+      <ReactJson
+        src={jsonValue}
+        // onEdit={(edit) => handleJSONChange(edit.updated_src)}
+        // onAdd={(add) => handleJSONChange(add.updated_src)}
+        // onDelete={(del) => handleJSONChange(del.updated_src)}
+        // theme="monokai"
+        enableClipboard={true}
+        displayDataTypes={true}
+      />
     </Box>
   );
 };

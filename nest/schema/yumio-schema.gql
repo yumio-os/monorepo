@@ -383,7 +383,7 @@ type Query {
   opSiteBusiness(siteId: Int!): [OPBusiness!]!
   opSiteTags(siteId: Int!, type: TagType): [OPTag!]!
   opSiteMenuTags(siteId: Int!, type: TagType): [OPTagMenu!]!
-  opItemsInSite(siteId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!
+  opItemsInSite(siteId: Int!, pagination: Pagination = {size: 10, page: 1}): OPTopLineItemsWithPagination!
   opItemsInLocation(locationId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!
   opItemsInActiveMenu(menuId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!
   opItemsInMenu(menuId: Int!, pagination: Pagination! = {size: 10, page: 1}): OPTopLineItemsWithPagination!

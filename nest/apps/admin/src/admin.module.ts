@@ -99,7 +99,17 @@ import {
           adminJsOptions: {
             rootPath: '/',
             resources: [
-              User,
+              // User,
+              {
+                resource: User,
+                options: {
+                  properties: {
+                    password: {
+                      isVisible: false, // hides password from list, filter, show, and edit pages
+                    },
+                  },
+                },
+              },
               ApiKey,
               // Site,
               getSite(Components),

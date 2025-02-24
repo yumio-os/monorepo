@@ -255,16 +255,6 @@ export type OpBusinessBaseItem = {
   sku?: Maybe<Scalars['String']['output']>;
 };
 
-export type OpLocation = {
-  __typename?: 'OPLocation';
-  businessId: Scalars['Int']['output'];
-  id: Scalars['Int']['output'];
-  menus: Array<OpMenu>;
-  name: Scalars['String']['output'];
-  shortName: Scalars['String']['output'];
-  tax?: Maybe<TaxSettings>;
-};
-
 export type OpMenu = {
   __typename?: 'OPMenu';
   businessId: Scalars['Int']['output'];
@@ -292,6 +282,7 @@ export type OpTag = {
   id: Scalars['Int']['output'];
   images?: Maybe<ItemImages>;
   name: Scalars['String']['output'];
+  type: TagType;
 };
 
 export type OpTagMenu = {
@@ -299,6 +290,7 @@ export type OpTagMenu = {
   id: Scalars['Int']['output'];
   images?: Maybe<ItemImages>;
   name: Scalars['String']['output'];
+  position: Scalars['Int']['output'];
   tag: OpTag;
 };
 
@@ -316,8 +308,26 @@ export type OpTopLineItem = {
   position: Scalars['Int']['output'];
   price?: Maybe<Scalars['Int']['output']>;
   stock?: Maybe<OpStockLevel>;
-  tags: Array<TagMenu>;
+  tags: Array<OpTagMenu>;
   tax?: Maybe<TaxSettings>;
+};
+
+export type OpTopLineItemsWithPagination = {
+  __typename?: 'OPTopLineItemsWithPagination';
+  items: Array<OpTopLineItem>;
+  pagination: PaginationMeta;
+};
+
+export type Pagination = {
+  page?: Scalars['Int']['input'];
+  size?: Scalars['Int']['input'];
+};
+
+export type PaginationMeta = {
+  __typename?: 'PaginationMeta';
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Query = {
@@ -332,9 +342,15 @@ export type Query = {
   coreMenuBaseItem?: Maybe<MenuBaseItem>;
   coreSite?: Maybe<Site>;
   coreTag?: Maybe<Tag>;
-  opItemsInLocation: Array<OpMenu>;
-  opItemsInMenu: Array<OpTopLineItem>;
-  opItemsInSite: Array<OpLocation>;
+  opItemsInActiveMenu: OpTopLineItemsWithPagination;
+  opItemsInLocation: OpTopLineItemsWithPagination;
+  opItemsInLocationForCollection: OpTopLineItemsWithPagination;
+  opItemsInMenu: OpTopLineItemsWithPagination;
+  opItemsInMenuForCollection: OpTopLineItemsWithPagination;
+  opItemsInSite: OpTopLineItemsWithPagination;
+  opItemsInSiteBrandForCollection: OpTopLineItemsWithPagination;
+  opItemsInSiteForBrand: OpTopLineItemsWithPagination;
+  opItemsInSiteForCollection: OpTopLineItemsWithPagination;
   opSite: OpSite;
   opSiteBrands: Array<OpBrand>;
   opSiteBusiness: Array<OpBusiness>;
@@ -388,18 +404,63 @@ export type QueryCoreTagArgs = {
 };
 
 
+export type QueryOpItemsInActiveMenuArgs = {
+  menuId: Scalars['Int']['input'];
+  pagination?: Pagination;
+};
+
+
 export type QueryOpItemsInLocationArgs = {
   locationId: Scalars['Int']['input'];
+  pagination?: Pagination;
+};
+
+
+export type QueryOpItemsInLocationForCollectionArgs = {
+  locationId: Scalars['Int']['input'];
+  pagination?: Pagination;
+  tagMenuId: Scalars['Int']['input'];
 };
 
 
 export type QueryOpItemsInMenuArgs = {
   menuId: Scalars['Int']['input'];
+  pagination?: Pagination;
+};
+
+
+export type QueryOpItemsInMenuForCollectionArgs = {
+  menuId: Scalars['Int']['input'];
+  pagination?: Pagination;
+  tagMenuId: Scalars['Int']['input'];
 };
 
 
 export type QueryOpItemsInSiteArgs = {
+  pagination?: Pagination;
   siteId: Scalars['Int']['input'];
+};
+
+
+export type QueryOpItemsInSiteBrandForCollectionArgs = {
+  brandId: Scalars['Int']['input'];
+  pagination?: Pagination;
+  siteId: Scalars['Int']['input'];
+  tagMenuId: Scalars['Int']['input'];
+};
+
+
+export type QueryOpItemsInSiteForBrandArgs = {
+  brandId: Scalars['Int']['input'];
+  pagination?: Pagination;
+  siteId: Scalars['Int']['input'];
+};
+
+
+export type QueryOpItemsInSiteForCollectionArgs = {
+  pagination?: Pagination;
+  siteId: Scalars['Int']['input'];
+  tagMenuId: Scalars['Int']['input'];
 };
 
 
@@ -517,6 +578,58 @@ export type OpSiteQueryVariables = Exact<{
 
 export type OpSiteQuery = { __typename?: 'Query', opSite: { __typename?: 'OPSite', id: number, name: string, shortName: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }, opSiteBrands: Array<{ __typename?: 'OPBrand', id: number, name: string, shortName: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }>, opSiteBusiness: Array<{ __typename?: 'OPBusiness', id: number, name: string, shortName: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }>, opSiteTags: Array<{ __typename?: 'OPTag', id: number, name: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }>, opSiteMenuTagsCollection: Array<{ __typename?: 'OPTagMenu', id: number, name: string, tag: { __typename?: 'OPTag', id: number, name: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }, images?: { __typename?: 'ItemImages', default?: string | null } | null }>, opSiteMenuTagsCategory: Array<{ __typename?: 'OPTagMenu', id: number, name: string, tag: { __typename?: 'OPTag', id: number, name: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }, images?: { __typename?: 'ItemImages', default?: string | null } | null }> };
 
+export type OpOneSiteQueryVariables = Exact<{
+  siteId: Scalars['Int']['input'];
+}>;
+
+
+export type OpOneSiteQuery = { __typename?: 'Query', opSite: { __typename?: 'OPSite', id: number, name: string, shortName: string, images?: { __typename?: 'ItemImages', default?: string | null } | null } };
+
+export type OpOneSiteBrandQueryVariables = Exact<{
+  siteId: Scalars['Int']['input'];
+}>;
+
+
+export type OpOneSiteBrandQuery = { __typename?: 'Query', opSiteBrands: Array<{ __typename?: 'OPBrand', id: number, name: string, shortName: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }> };
+
+export type OpOneSiteBusinessQueryVariables = Exact<{
+  siteId: Scalars['Int']['input'];
+}>;
+
+
+export type OpOneSiteBusinessQuery = { __typename?: 'Query', opSiteBusiness: Array<{ __typename?: 'OPBusiness', id: number, name: string, shortName: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }> };
+
+export type OpOneSiteTagsQueryVariables = Exact<{
+  siteId: Scalars['Int']['input'];
+}>;
+
+
+export type OpOneSiteTagsQuery = { __typename?: 'Query', opSiteTags: Array<{ __typename?: 'OPTag', id: number, name: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }> };
+
+export type OpOneSiteMenuTagsCollectionQueryVariables = Exact<{
+  siteId: Scalars['Int']['input'];
+  type?: InputMaybe<TagType>;
+}>;
+
+
+export type OpOneSiteMenuTagsCollectionQuery = { __typename?: 'Query', opSiteMenuTagsCollection: Array<{ __typename?: 'OPTagMenu', id: number, name: string, tag: { __typename?: 'OPTag', id: number, name: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }, images?: { __typename?: 'ItemImages', default?: string | null } | null }> };
+
+export type OpOneSiteMenuTagsCategoryQueryVariables = Exact<{
+  siteId: Scalars['Int']['input'];
+  type?: InputMaybe<TagType>;
+}>;
+
+
+export type OpOneSiteMenuTagsCategoryQuery = { __typename?: 'Query', opSiteMenuTagsCategory: Array<{ __typename?: 'OPTagMenu', id: number, name: string, tag: { __typename?: 'OPTag', id: number, name: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }, images?: { __typename?: 'ItemImages', default?: string | null } | null }> };
+
+export type OpItemsInSiteQueryVariables = Exact<{
+  siteId: Scalars['Int']['input'];
+  pagination?: InputMaybe<Pagination>;
+}>;
+
+
+export type OpItemsInSiteQuery = { __typename?: 'Query', opItemsInSite: { __typename?: 'OPTopLineItemsWithPagination', pagination: { __typename?: 'PaginationMeta', page: number, size: number, totalCount: number }, items: Array<{ __typename?: 'OPTopLineItem', id: number, businessBaseItemId: number, menuId: number, hasAddons: boolean, name?: string | null, price?: number | null, position: number, images?: { __typename?: 'ItemImages', default?: string | null, defaultLowRes?: string | null, thumbnail?: string | null, thumbnailLowRes?: string | null } | null, discount?: { __typename?: 'ItemDiscountSettings', amount?: number | null, amountPer?: number | null, maxDiscount?: number | null, maxDiscountPer?: number | null } | null, stock?: { __typename?: 'OPStockLevel', amount: number } | null, businessBaseItem: { __typename?: 'OPBusinessBaseItem', id: number, sku?: string | null, brandId?: number | null, businessId: number } }> } };
+
 
 export const OpSiteDocument = gql`
     query OpSite($siteId: Int!, $typeCollection: TagType, $typeCategory: TagType) {
@@ -616,3 +729,361 @@ export type OpSiteQueryHookResult = ReturnType<typeof useOpSiteQuery>;
 export type OpSiteLazyQueryHookResult = ReturnType<typeof useOpSiteLazyQuery>;
 export type OpSiteSuspenseQueryHookResult = ReturnType<typeof useOpSiteSuspenseQuery>;
 export type OpSiteQueryResult = Apollo.QueryResult<OpSiteQuery, OpSiteQueryVariables>;
+export const OpOneSiteDocument = gql`
+    query OpOneSite($siteId: Int!) {
+  opSite(siteId: $siteId) {
+    id
+    name
+    shortName
+    images {
+      default
+    }
+  }
+}
+    `;
+
+/**
+ * __useOpOneSiteQuery__
+ *
+ * To run a query within a React component, call `useOpOneSiteQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOpOneSiteQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOpOneSiteQuery({
+ *   variables: {
+ *      siteId: // value for 'siteId'
+ *   },
+ * });
+ */
+export function useOpOneSiteQuery(baseOptions: Apollo.QueryHookOptions<OpOneSiteQuery, OpOneSiteQueryVariables> & ({ variables: OpOneSiteQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OpOneSiteQuery, OpOneSiteQueryVariables>(OpOneSiteDocument, options);
+      }
+export function useOpOneSiteLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpOneSiteQuery, OpOneSiteQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OpOneSiteQuery, OpOneSiteQueryVariables>(OpOneSiteDocument, options);
+        }
+export function useOpOneSiteSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpOneSiteQuery, OpOneSiteQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<OpOneSiteQuery, OpOneSiteQueryVariables>(OpOneSiteDocument, options);
+        }
+export type OpOneSiteQueryHookResult = ReturnType<typeof useOpOneSiteQuery>;
+export type OpOneSiteLazyQueryHookResult = ReturnType<typeof useOpOneSiteLazyQuery>;
+export type OpOneSiteSuspenseQueryHookResult = ReturnType<typeof useOpOneSiteSuspenseQuery>;
+export type OpOneSiteQueryResult = Apollo.QueryResult<OpOneSiteQuery, OpOneSiteQueryVariables>;
+export const OpOneSiteBrandDocument = gql`
+    query OpOneSiteBrand($siteId: Int!) {
+  opSiteBrands(siteId: $siteId) {
+    id
+    name
+    shortName
+    images {
+      default
+    }
+  }
+}
+    `;
+
+/**
+ * __useOpOneSiteBrandQuery__
+ *
+ * To run a query within a React component, call `useOpOneSiteBrandQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOpOneSiteBrandQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOpOneSiteBrandQuery({
+ *   variables: {
+ *      siteId: // value for 'siteId'
+ *   },
+ * });
+ */
+export function useOpOneSiteBrandQuery(baseOptions: Apollo.QueryHookOptions<OpOneSiteBrandQuery, OpOneSiteBrandQueryVariables> & ({ variables: OpOneSiteBrandQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OpOneSiteBrandQuery, OpOneSiteBrandQueryVariables>(OpOneSiteBrandDocument, options);
+      }
+export function useOpOneSiteBrandLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpOneSiteBrandQuery, OpOneSiteBrandQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OpOneSiteBrandQuery, OpOneSiteBrandQueryVariables>(OpOneSiteBrandDocument, options);
+        }
+export function useOpOneSiteBrandSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpOneSiteBrandQuery, OpOneSiteBrandQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<OpOneSiteBrandQuery, OpOneSiteBrandQueryVariables>(OpOneSiteBrandDocument, options);
+        }
+export type OpOneSiteBrandQueryHookResult = ReturnType<typeof useOpOneSiteBrandQuery>;
+export type OpOneSiteBrandLazyQueryHookResult = ReturnType<typeof useOpOneSiteBrandLazyQuery>;
+export type OpOneSiteBrandSuspenseQueryHookResult = ReturnType<typeof useOpOneSiteBrandSuspenseQuery>;
+export type OpOneSiteBrandQueryResult = Apollo.QueryResult<OpOneSiteBrandQuery, OpOneSiteBrandQueryVariables>;
+export const OpOneSiteBusinessDocument = gql`
+    query OpOneSiteBusiness($siteId: Int!) {
+  opSiteBusiness(siteId: $siteId) {
+    id
+    name
+    shortName
+    images {
+      default
+    }
+  }
+}
+    `;
+
+/**
+ * __useOpOneSiteBusinessQuery__
+ *
+ * To run a query within a React component, call `useOpOneSiteBusinessQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOpOneSiteBusinessQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOpOneSiteBusinessQuery({
+ *   variables: {
+ *      siteId: // value for 'siteId'
+ *   },
+ * });
+ */
+export function useOpOneSiteBusinessQuery(baseOptions: Apollo.QueryHookOptions<OpOneSiteBusinessQuery, OpOneSiteBusinessQueryVariables> & ({ variables: OpOneSiteBusinessQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OpOneSiteBusinessQuery, OpOneSiteBusinessQueryVariables>(OpOneSiteBusinessDocument, options);
+      }
+export function useOpOneSiteBusinessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpOneSiteBusinessQuery, OpOneSiteBusinessQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OpOneSiteBusinessQuery, OpOneSiteBusinessQueryVariables>(OpOneSiteBusinessDocument, options);
+        }
+export function useOpOneSiteBusinessSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpOneSiteBusinessQuery, OpOneSiteBusinessQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<OpOneSiteBusinessQuery, OpOneSiteBusinessQueryVariables>(OpOneSiteBusinessDocument, options);
+        }
+export type OpOneSiteBusinessQueryHookResult = ReturnType<typeof useOpOneSiteBusinessQuery>;
+export type OpOneSiteBusinessLazyQueryHookResult = ReturnType<typeof useOpOneSiteBusinessLazyQuery>;
+export type OpOneSiteBusinessSuspenseQueryHookResult = ReturnType<typeof useOpOneSiteBusinessSuspenseQuery>;
+export type OpOneSiteBusinessQueryResult = Apollo.QueryResult<OpOneSiteBusinessQuery, OpOneSiteBusinessQueryVariables>;
+export const OpOneSiteTagsDocument = gql`
+    query OpOneSiteTags($siteId: Int!) {
+  opSiteTags(siteId: $siteId) {
+    id
+    name
+    images {
+      default
+    }
+  }
+}
+    `;
+
+/**
+ * __useOpOneSiteTagsQuery__
+ *
+ * To run a query within a React component, call `useOpOneSiteTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOpOneSiteTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOpOneSiteTagsQuery({
+ *   variables: {
+ *      siteId: // value for 'siteId'
+ *   },
+ * });
+ */
+export function useOpOneSiteTagsQuery(baseOptions: Apollo.QueryHookOptions<OpOneSiteTagsQuery, OpOneSiteTagsQueryVariables> & ({ variables: OpOneSiteTagsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OpOneSiteTagsQuery, OpOneSiteTagsQueryVariables>(OpOneSiteTagsDocument, options);
+      }
+export function useOpOneSiteTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpOneSiteTagsQuery, OpOneSiteTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OpOneSiteTagsQuery, OpOneSiteTagsQueryVariables>(OpOneSiteTagsDocument, options);
+        }
+export function useOpOneSiteTagsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpOneSiteTagsQuery, OpOneSiteTagsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<OpOneSiteTagsQuery, OpOneSiteTagsQueryVariables>(OpOneSiteTagsDocument, options);
+        }
+export type OpOneSiteTagsQueryHookResult = ReturnType<typeof useOpOneSiteTagsQuery>;
+export type OpOneSiteTagsLazyQueryHookResult = ReturnType<typeof useOpOneSiteTagsLazyQuery>;
+export type OpOneSiteTagsSuspenseQueryHookResult = ReturnType<typeof useOpOneSiteTagsSuspenseQuery>;
+export type OpOneSiteTagsQueryResult = Apollo.QueryResult<OpOneSiteTagsQuery, OpOneSiteTagsQueryVariables>;
+export const OpOneSiteMenuTagsCollectionDocument = gql`
+    query OpOneSiteMenuTagsCollection($siteId: Int!, $type: TagType) {
+  opSiteMenuTagsCollection: opSiteMenuTags(siteId: $siteId, type: $type) {
+    id
+    name
+    tag {
+      id
+      name
+      images {
+        default
+      }
+    }
+    images {
+      default
+    }
+  }
+}
+    `;
+
+/**
+ * __useOpOneSiteMenuTagsCollectionQuery__
+ *
+ * To run a query within a React component, call `useOpOneSiteMenuTagsCollectionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOpOneSiteMenuTagsCollectionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOpOneSiteMenuTagsCollectionQuery({
+ *   variables: {
+ *      siteId: // value for 'siteId'
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useOpOneSiteMenuTagsCollectionQuery(baseOptions: Apollo.QueryHookOptions<OpOneSiteMenuTagsCollectionQuery, OpOneSiteMenuTagsCollectionQueryVariables> & ({ variables: OpOneSiteMenuTagsCollectionQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OpOneSiteMenuTagsCollectionQuery, OpOneSiteMenuTagsCollectionQueryVariables>(OpOneSiteMenuTagsCollectionDocument, options);
+      }
+export function useOpOneSiteMenuTagsCollectionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpOneSiteMenuTagsCollectionQuery, OpOneSiteMenuTagsCollectionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OpOneSiteMenuTagsCollectionQuery, OpOneSiteMenuTagsCollectionQueryVariables>(OpOneSiteMenuTagsCollectionDocument, options);
+        }
+export function useOpOneSiteMenuTagsCollectionSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpOneSiteMenuTagsCollectionQuery, OpOneSiteMenuTagsCollectionQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<OpOneSiteMenuTagsCollectionQuery, OpOneSiteMenuTagsCollectionQueryVariables>(OpOneSiteMenuTagsCollectionDocument, options);
+        }
+export type OpOneSiteMenuTagsCollectionQueryHookResult = ReturnType<typeof useOpOneSiteMenuTagsCollectionQuery>;
+export type OpOneSiteMenuTagsCollectionLazyQueryHookResult = ReturnType<typeof useOpOneSiteMenuTagsCollectionLazyQuery>;
+export type OpOneSiteMenuTagsCollectionSuspenseQueryHookResult = ReturnType<typeof useOpOneSiteMenuTagsCollectionSuspenseQuery>;
+export type OpOneSiteMenuTagsCollectionQueryResult = Apollo.QueryResult<OpOneSiteMenuTagsCollectionQuery, OpOneSiteMenuTagsCollectionQueryVariables>;
+export const OpOneSiteMenuTagsCategoryDocument = gql`
+    query OpOneSiteMenuTagsCategory($siteId: Int!, $type: TagType) {
+  opSiteMenuTagsCategory: opSiteMenuTags(siteId: $siteId, type: $type) {
+    id
+    name
+    tag {
+      id
+      name
+      images {
+        default
+      }
+    }
+    images {
+      default
+    }
+  }
+}
+    `;
+
+/**
+ * __useOpOneSiteMenuTagsCategoryQuery__
+ *
+ * To run a query within a React component, call `useOpOneSiteMenuTagsCategoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOpOneSiteMenuTagsCategoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOpOneSiteMenuTagsCategoryQuery({
+ *   variables: {
+ *      siteId: // value for 'siteId'
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useOpOneSiteMenuTagsCategoryQuery(baseOptions: Apollo.QueryHookOptions<OpOneSiteMenuTagsCategoryQuery, OpOneSiteMenuTagsCategoryQueryVariables> & ({ variables: OpOneSiteMenuTagsCategoryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OpOneSiteMenuTagsCategoryQuery, OpOneSiteMenuTagsCategoryQueryVariables>(OpOneSiteMenuTagsCategoryDocument, options);
+      }
+export function useOpOneSiteMenuTagsCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpOneSiteMenuTagsCategoryQuery, OpOneSiteMenuTagsCategoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OpOneSiteMenuTagsCategoryQuery, OpOneSiteMenuTagsCategoryQueryVariables>(OpOneSiteMenuTagsCategoryDocument, options);
+        }
+export function useOpOneSiteMenuTagsCategorySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpOneSiteMenuTagsCategoryQuery, OpOneSiteMenuTagsCategoryQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<OpOneSiteMenuTagsCategoryQuery, OpOneSiteMenuTagsCategoryQueryVariables>(OpOneSiteMenuTagsCategoryDocument, options);
+        }
+export type OpOneSiteMenuTagsCategoryQueryHookResult = ReturnType<typeof useOpOneSiteMenuTagsCategoryQuery>;
+export type OpOneSiteMenuTagsCategoryLazyQueryHookResult = ReturnType<typeof useOpOneSiteMenuTagsCategoryLazyQuery>;
+export type OpOneSiteMenuTagsCategorySuspenseQueryHookResult = ReturnType<typeof useOpOneSiteMenuTagsCategorySuspenseQuery>;
+export type OpOneSiteMenuTagsCategoryQueryResult = Apollo.QueryResult<OpOneSiteMenuTagsCategoryQuery, OpOneSiteMenuTagsCategoryQueryVariables>;
+export const OpItemsInSiteDocument = gql`
+    query OpItemsInSite($siteId: Int!, $pagination: Pagination) {
+  opItemsInSite(siteId: $siteId, pagination: $pagination) {
+    pagination {
+      page
+      size
+      totalCount
+    }
+    items {
+      id
+      businessBaseItemId
+      menuId
+      hasAddons
+      name
+      images {
+        default
+        defaultLowRes
+        thumbnail
+        thumbnailLowRes
+      }
+      price
+      discount {
+        amount
+        amountPer
+        maxDiscount
+        maxDiscountPer
+      }
+      position
+      stock {
+        amount
+      }
+      businessBaseItem {
+        id
+        sku
+        brandId
+        businessId
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useOpItemsInSiteQuery__
+ *
+ * To run a query within a React component, call `useOpItemsInSiteQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOpItemsInSiteQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOpItemsInSiteQuery({
+ *   variables: {
+ *      siteId: // value for 'siteId'
+ *      pagination: // value for 'pagination'
+ *   },
+ * });
+ */
+export function useOpItemsInSiteQuery(baseOptions: Apollo.QueryHookOptions<OpItemsInSiteQuery, OpItemsInSiteQueryVariables> & ({ variables: OpItemsInSiteQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OpItemsInSiteQuery, OpItemsInSiteQueryVariables>(OpItemsInSiteDocument, options);
+      }
+export function useOpItemsInSiteLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpItemsInSiteQuery, OpItemsInSiteQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OpItemsInSiteQuery, OpItemsInSiteQueryVariables>(OpItemsInSiteDocument, options);
+        }
+export function useOpItemsInSiteSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpItemsInSiteQuery, OpItemsInSiteQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<OpItemsInSiteQuery, OpItemsInSiteQueryVariables>(OpItemsInSiteDocument, options);
+        }
+export type OpItemsInSiteQueryHookResult = ReturnType<typeof useOpItemsInSiteQuery>;
+export type OpItemsInSiteLazyQueryHookResult = ReturnType<typeof useOpItemsInSiteLazyQuery>;
+export type OpItemsInSiteSuspenseQueryHookResult = ReturnType<typeof useOpItemsInSiteSuspenseQuery>;
+export type OpItemsInSiteQueryResult = Apollo.QueryResult<OpItemsInSiteQuery, OpItemsInSiteQueryVariables>;
