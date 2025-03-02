@@ -1,9 +1,9 @@
 import { FindManyOptions, Repository } from 'typeorm';
 
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Pagination } from '@yumio/common/pagination';
 import { MenuBaseItem } from '@yumio/modules/core';
-import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class MenuBaseItemService {
@@ -237,7 +237,46 @@ export class MenuBaseItemService {
 
     return entityManager.count(MenuBaseItem, query);
   }
-  //  ======================================== findInSiteAndMenuTag
+  //  ======================================== findInSiteAndTag
+  private findInSiteAndTagWhere(siteId: number, tagId: number) {
+    return {
+      menu: {
+        location: { siteId }, // Assuming Menu is related to Location and Location is related to Site
+      },
+      tags: {
+        tagId: tagId,
+      },
+    };
+  }
+
+  findInSiteAndTag(
+    siteId: number,
+    tagId: number,
+    active?: boolean,
+    relations = [],
+    pagination?: Pagination,
+    entityManager = this.repo.manager,
+  ) {
+    const query = {
+      where: this.findInSiteAndTagWhere(siteId, tagId),
+      relations,
+    };
+
+    this.fillWhereMenuActive(query, active);
+    this.handlePagination(query, pagination);
+
+    return entityManager.find(MenuBaseItem, query);
+  }
+
+  findInSiteAndTagCount(siteId: number, menuTagId: number, active?: boolean, entityManager = this.repo.manager) {
+    const query = {
+      where: this.findInSiteAndTagWhere(siteId, menuTagId),
+    };
+
+    this.fillWhereMenuActive(query, active);
+
+    return entityManager.count(MenuBaseItem, query);
+  }
 
   //  ======================================== findInSiteAndBrandAndMenuTag
   private findInSiteAndBrandAndMenuTagWhere(siteId: number, brandId: number, menuTagId: number) {

@@ -2,9 +2,11 @@ import { Component, createEffect, createSignal, JSXElement, onMount } from 'soli
 import { render } from 'solid-js/web';
 
 import NavigationKiosk from '../../modules/navigation-kiosk/NavigationKiosk';
+import SiteCollections from '../../modules/site-collections/SiteCollections';
 import Site from '../../modules/site/Site';
 import { ApolloProvider, useApollo } from '../../providers/apollo/Apollo';
 import { AuthProvider, useAuth } from '../../providers/auth/Auth';
+import { SiteProvider, useSite } from '../../providers/siteProvider/Site.provider';
 import kioskStyle from './Kiosk.module.css';
 
 const root = document.getElementById('root');
@@ -12,6 +14,7 @@ const root = document.getElementById('root');
 const pages = {
   landing: 'landing',
   site: 'site',
+  siteCollection: 'siteCollection',
   item: 'item',
   basket: 'basket',
   activeOrder: 'activeOrder',
@@ -22,6 +25,7 @@ export type Page = (typeof pages)[keyof typeof pages];
 const pageParameterSchema = {
   landing: ['siteId', 'otp'],
   site: ['siteId', 'otp'],
+  siteCollection: ['siteId', 'collectionId', 'otp'],
   item: ['siteId', 'menuId', 'itemId', 'otp'],
   basket: ['siteId', 'otp'],
   activeOrder: ['otp', 'orderId'],
@@ -54,6 +58,7 @@ const Kiosk: Component = (): JSXElement => {
 
   const client = useApollo();
   const useId = authState().user?.id;
+  const { siteData, setSiteData, fetchtSiteData } = useSite();
 
   const [historyStack, setHistoryStack] = createSignal<Array<{ page: Page; params: Record<AllAvailableAttributes, string> }>>([]);
 
@@ -103,6 +108,8 @@ const Kiosk: Component = (): JSXElement => {
     });
 
     window.location.hash = `#${params.toString()}`;
+
+    fetchtSiteData(pageParams().siteId).catch();
   });
 
   // Handle navigation by setting both page and orgId
@@ -142,7 +149,9 @@ const Kiosk: Component = (): JSXElement => {
   };
 
   const goToSplash: GoToSplash = () => {};
-  const goToMenu: GoToMenu = () => {};
+  const goToMenu: GoToMenu = () => {
+    handleNavigate('landing', { siteId: pageParams().siteId });
+  };
 
   const goBack = () => {
     const stack = historyStack();
@@ -165,8 +174,18 @@ const Kiosk: Component = (): JSXElement => {
   const renderPage = () => {
     switch (currentPage()) {
       case 'landing':
+      case 'site':
       default:
         return <Site navigate={navigate} currentPage={currentPage()} params={{ siteId: pageParams().siteId }} />;
+
+      case 'siteCollection':
+        return (
+          <SiteCollections
+            navigate={navigate}
+            currentPage={currentPage()}
+            params={{ siteId: pageParams().siteId, collectionId: pageParams().collectionId }}
+          />
+        );
     }
   };
 
@@ -175,7 +194,7 @@ const Kiosk: Component = (): JSXElement => {
       {/* Navigation menu */}
 
       <nav class="navbar navbar-expand navbar-light">
-        <NavigationKiosk onNavigate={handleNavigate} currentPage={currentPage()} />
+        <NavigationKiosk navigate={navigate} currentPage={currentPage()} />
       </nav>
 
       {/* Main content */}
@@ -189,7 +208,9 @@ if (root) {
     () => (
       <AuthProvider>
         <ApolloProvider>
-          <Kiosk />
+          <SiteProvider>
+            <Kiosk />
+          </SiteProvider>
         </ApolloProvider>
       </AuthProvider>
     ),

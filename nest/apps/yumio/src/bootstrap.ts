@@ -20,7 +20,6 @@ export async function bootstrap(path?: string) {
 
   let logger: any = defaultNestLogger; // nest logger
 
-  // testing env -> use default nest logger
   if (process.env.ACTIVE_PROFILE != 'test') {
     const winstonLogger = createWinstonLogger(logLevel, logDepth);
     logger = winstonLogger;
@@ -51,8 +50,6 @@ export async function bootstrap(path?: string) {
   app.use(compression());
 
   app.enableShutdownHooks();
-  // const defaultGuard = app.select(AuthModule).get(DefaultGuard);
-  // app.useGlobalGuards(defaultGuard);
 
   await app.listen(process.env['PORT'] ?? 4000);
   return app;

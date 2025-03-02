@@ -13,8 +13,6 @@ import {
   OpOneSiteMenuTagsCategoryQueryVariables,
   OpOneSiteMenuTagsCollectionQuery,
   OpOneSiteMenuTagsCollectionQueryVariables,
-  OpOneSiteQuery,
-  OpOneSiteQueryVariables,
   OpOneSiteTagsQuery,
   OpOneSiteTagsQueryVariables,
   OpSiteQuery,
@@ -22,13 +20,13 @@ import {
 } from '../../providers/apollo/gql';
 import {
   opItemsInSite,
-  opOneSite,
   opOneSiteBrand,
   opOneSiteBusiness,
   opOneSiteMenuTagsCategory,
   opOneSiteMenuTagsCollection,
   opOneSiteTags,
 } from '../../providers/apollo/queries/site';
+import { useSite } from '../../providers/siteProvider/Site.provider';
 import stylesSite from './Site.module.css';
 
 interface SiteProfilesProps {
@@ -41,7 +39,7 @@ interface SiteProfilesProps {
 
 const Site: Component<SiteProfilesProps> = (props) => {
   // Create a signal to store the ID from the URL
-  const [siteData, setSiteData] = createSignal<OpSiteQuery['opSite'] | null>(null);
+  // const [siteData, setSiteData] = createSignal<OpSiteQuery['opSite'] | null>(null);
   const [brandsData, setBrandsData] = createSignal<OpSiteQuery['opSiteBrands'] | null>(null);
   const [businessData, setBusinessData] = createSignal<OpSiteQuery['opSiteBusiness'] | null>(null);
   const [tagsData, setTagsData] = createSignal<OpSiteQuery['opSiteTags'] | null>(null);
@@ -51,6 +49,8 @@ const Site: Component<SiteProfilesProps> = (props) => {
 
   const [errorSiteState, setErrorSiteState] = createSignal<any>(null);
   const [loadingState, setLoadingState] = createSignal(false);
+
+  const { siteData, setSiteCurrentTag } = useSite();
 
   const client = useApollo();
 
@@ -62,44 +62,21 @@ const Site: Component<SiteProfilesProps> = (props) => {
         return;
       }
       setLoadingState(true);
-      // const promises = [
-      //   (async()=>{}())
-      // ];
-      // client
-      //   .query<OpSiteQuery, OpSiteQueryVariables>({
-      //     query: fullSiteQuery,
-      //     variables: {
-      //       siteId: Number(props?.params?.siteId),
-      //       typeCategory: TagType.Category,
-      //       typeCollection: TagType.Collection,
-      //     },
-      //   })
-      //   .then((result) => {
-      //     setLoadingState(false);
-      //     setSiteData(result.data.opSite);
-      //     setBrandsData(result.data.opSiteBrands);
-      //     setBusinessData(result.data.opSiteBusiness);
-      //     setTagsData(result.data.opSiteTags);
-      //     setMenuTagsCategoryData(result.data.opSiteMenuTagsCategory);
-      //     setMenuTagsCollectionData(result.data.opSiteMenuTagsCollection);
-      //   })
-      //   .catch((err) => {
-      //
-      //   });
+
       await Promise.allSettled([
-        (async () => {
-          setSiteData(
-            await client
-              .query<OpOneSiteQuery, OpOneSiteQueryVariables>({
-                query: opOneSite,
-                variables: {
-                  siteId: Number(props?.params?.siteId),
-                },
-              })
-              .then((resp) => resp?.data?.opSite)
-              .catch((_) => null),
-          );
-        })(),
+        // (async () => {
+        //   setSiteData(
+        //     await client
+        //       .query<OpOneSiteQuery, OpOneSiteQueryVariables>({
+        //         query: opOneSite,
+        //         variables: {
+        //           siteId: Number(props?.params?.siteId),
+        //         },
+        //       })
+        //       .then((resp) => resp?.data?.opSite)
+        //       .catch((_) => null),
+        //   );
+        // })(),
         (async () => {
           setItemsData(
             await client
@@ -109,7 +86,7 @@ const Site: Component<SiteProfilesProps> = (props) => {
                   siteId: Number(props?.params?.siteId),
                   pagination: {
                     page: 1,
-                    size: 5,
+                    size: 10,
                   },
                 },
               })
@@ -301,7 +278,13 @@ const Site: Component<SiteProfilesProps> = (props) => {
                     <div class="d-flex flex-row flex-nowrap overflow-auto">
                       {menuTagsCategoryData().map((menuTag) => (
                         <div class="col-sm-2">
-                          <div class="card me-2">
+                          <div
+                            class="card me-2"
+                            onClick={() => {
+                              setSiteCurrentTag(menuTag.tag);
+                              props.navigate.onNavigate('siteCollection', { siteId: props?.params?.siteId, collectionId: menuTag.tag.id });
+                            }}
+                          >
                             <div class={`card-img-top overflow-hidden ${stylesSite.CustomCardIconContainer}`}>
                               <img
                                 src={menuTag?.images?.default || 'https://via.placeholder.com/150'}
@@ -318,7 +301,7 @@ const Site: Component<SiteProfilesProps> = (props) => {
                 </div>
               )}
 
-              {/* COLLECTIONS */}
+              {/* SITE COLLECTIONS */}
               {menuTagsCollectionData() && menuTagsCollectionData()?.length > 0 && (
                 <div id="siteCarouselmenuTags" title="collections" class="my-2">
                   <h2 class="text-start">Collections</h2>
@@ -326,7 +309,13 @@ const Site: Component<SiteProfilesProps> = (props) => {
                     <div class="d-flex flex-row flex-nowrap overflow-auto">
                       {menuTagsCollectionData().map((menuTag) => (
                         <div class="col-sm-3">
-                          <div class="card me-2">
+                          <div
+                            class="card me-2"
+                            onClick={() => {
+                              setSiteCurrentTag(menuTag.tag);
+                              props.navigate.onNavigate('siteCollection', { siteId: props?.params?.siteId, collectionId: menuTag.tag.id });
+                            }}
+                          >
                             <div class={`card-img-top overflow-hidden ${stylesSite.CustomCardIconContainer}`}>
                               <img
                                 src={menuTag?.images?.default || 'https://via.placeholder.com/150'}

@@ -65,6 +65,26 @@ export class TagService {
     return query.getMany();
   }
 
+  async findActiveMenuTagsInSiteWithItems(siteId: number, type?: TagType, entityManager = this.repo.manager) {
+    let query = entityManager
+      .createQueryBuilder(TagMenu, 'tagMenu')
+      .leftJoinAndSelect('tagMenu.tag', 'tag')
+      .leftJoinAndSelect('tagMenu.menu', 'menu')
+      .leftJoinAndSelect('menu.location', 'location')
+      .innerJoin('tagMenu.menuItems', 'menuBaseItem') // Ensuring tagMenu is linked to menuBaseItem
+      .innerJoin('MTMMenuItemToMenuTag', 'mtmTag', 'mtmTag.tagMenuId = tagMenu.id') // Ensuring the tagMenu has linked items
+      .where('location.siteId = :siteId', { siteId })
+      .andWhere('location.activeMenuId = menu.id') // Ensuring activeMenuId matches menu.id
+      .groupBy('tagMenu.id, tag.id, menu.id, location.id')
+      .having('COUNT(mtmTag.menuBaseItemId) > 0'); // Ensure at least one linked item exists
+
+    if (type) {
+      query = query.andWhere('tag.type = :type', { type });
+    }
+
+    return query.getMany();
+  }
+
   async findActiveTagsInLocation(locationId: number, type?: TagType, entityManager = this.repo.manager) {
     let query = entityManager
       .createQueryBuilder(Tag, 'tag')

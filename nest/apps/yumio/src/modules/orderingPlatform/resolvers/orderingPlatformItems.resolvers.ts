@@ -1,4 +1,5 @@
 import { Args, ArgsType, Field, Int, Query, Resolver } from '@nestjs/graphql';
+import { FieldMap } from '@yumio/common';
 import { DefaultPagiValue, Pagination, PaginationMeta } from '@yumio/common/pagination';
 import { TagType } from '@yumio/modules/core';
 
@@ -6,7 +7,6 @@ import { MenuBaseItemService } from '../../core/services/menuBaseItem.service';
 import { ProjectionService } from '../../core/services/projections.service';
 import { mapCoreMenuBaseItemsToTopItem } from '../mappers/topLineItem.mapper';
 import { OPTopLineItemsWithPagination } from '../models/topLineItem.model';
-import { FieldMap } from '@yumio/common';
 
 @ArgsType()
 class ArgsItemsBySiteId {
@@ -78,6 +78,18 @@ class ArgsItemsBySiteIdAndMenuTagId {
 
   @Field((_) => Int)
   tagMenuId: number;
+
+  @Field((_) => Pagination, { defaultValue: DefaultPagiValue() })
+  pagination: Pagination;
+}
+
+@ArgsType()
+class ArgsItemsBySiteIdAndTagId {
+  @Field((_) => Int)
+  siteId: number;
+
+  @Field((_) => Int)
+  tagId: number;
 
   @Field((_) => Pagination, { defaultValue: DefaultPagiValue() })
   pagination: Pagination;
@@ -236,23 +248,24 @@ export class OrderingPlatformItemsResolver {
   @Query((_) => OPTopLineItemsWithPagination) // needs to be in active menu in collection
   async opItemsInSiteForCollection(
     @FieldMap() fieldMap,
-    @Args() { tagMenuId, siteId, pagination }: ArgsItemsBySiteIdAndMenuTagId,
+    @Args() { tagId, siteId, pagination }: ArgsItemsBySiteIdAndTagId,
   ): Promise<OPTopLineItemsWithPagination> {
     const response = new OPTopLineItemsWithPagination();
+    const unwrappedFieldMap = this.projection.unwrap(fieldMap, ['items']);
 
     await Promise.all([
       (async () => {
-        const items = await this.menuBaseItemService.findInSiteAndMenuTag(
+        const items = await this.menuBaseItemService.findInSiteAndTag(
           siteId,
-          tagMenuId,
+          tagId,
           true,
-          this.projection.itemsMenu(fieldMap),
+          this.projection.itemsMenu(unwrappedFieldMap),
           pagination,
         );
         response.items = mapCoreMenuBaseItemsToTopItem(items);
       })(),
       (async () => {
-        const count = await this.menuBaseItemService.findInSiteAndMenuTagCount(siteId, tagMenuId, true);
+        const count = await this.menuBaseItemService.findInSiteAndTagCount(siteId, tagId, true);
         this.handlePaginationMeta(response, pagination, count);
       })(),
     ]);

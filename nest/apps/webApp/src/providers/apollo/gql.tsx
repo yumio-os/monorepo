@@ -356,6 +356,7 @@ export type Query = {
   opSiteBusiness: Array<OpBusiness>;
   opSiteMenuTags: Array<OpTagMenu>;
   opSiteTags: Array<OpTag>;
+  opTag: OpTag;
 };
 
 
@@ -437,7 +438,7 @@ export type QueryOpItemsInMenuForCollectionArgs = {
 
 
 export type QueryOpItemsInSiteArgs = {
-  pagination?: Pagination;
+  pagination?: InputMaybe<Pagination>;
   siteId: Scalars['Int']['input'];
 };
 
@@ -460,7 +461,7 @@ export type QueryOpItemsInSiteForBrandArgs = {
 export type QueryOpItemsInSiteForCollectionArgs = {
   pagination?: Pagination;
   siteId: Scalars['Int']['input'];
-  tagMenuId: Scalars['Int']['input'];
+  tagId: Scalars['Int']['input'];
 };
 
 
@@ -488,6 +489,11 @@ export type QueryOpSiteMenuTagsArgs = {
 export type QueryOpSiteTagsArgs = {
   siteId: Scalars['Int']['input'];
   type?: InputMaybe<TagType>;
+};
+
+
+export type QueryOpTagArgs = {
+  tagId: Scalars['Int']['input'];
 };
 
 export type Site = {
@@ -569,6 +575,15 @@ export type TaxSettings = {
   taxRate?: Maybe<Scalars['Int']['output']>;
 };
 
+export type OpItemsInSiteForCollectionQueryVariables = Exact<{
+  siteId: Scalars['Int']['input'];
+  tagId: Scalars['Int']['input'];
+  pagination: Pagination;
+}>;
+
+
+export type OpItemsInSiteForCollectionQuery = { __typename?: 'Query', opItemsInSiteForCollection: { __typename?: 'OPTopLineItemsWithPagination', items: Array<{ __typename?: 'OPTopLineItem', id: number, name?: string | null, businessBaseItemId: number, menuId: number, position: number, price?: number | null, description?: string | null, hasAddons: boolean, tags: Array<{ __typename?: 'OPTagMenu', id: number, name: string, tag: { __typename?: 'OPTag', id: number, name: string } }>, businessBaseItem: { __typename?: 'OPBusinessBaseItem', id: number }, images?: { __typename?: 'ItemImages', default?: string | null, defaultLowRes?: string | null, thumbnail?: string | null, thumbnailLowRes?: string | null } | null, stock?: { __typename?: 'OPStockLevel', id: number, amount: number } | null, tax?: { __typename?: 'TaxSettings', taxRate?: number | null } | null, discount?: { __typename?: 'ItemDiscountSettings', amount?: number | null, maxDiscount?: number | null, maxDiscountPer?: number | null, amountPer?: number | null } | null }>, pagination: { __typename?: 'PaginationMeta', page: number, size: number, totalCount: number } } };
+
 export type OpSiteQueryVariables = Exact<{
   siteId: Scalars['Int']['input'];
   typeCollection?: InputMaybe<TagType>;
@@ -630,7 +645,104 @@ export type OpItemsInSiteQueryVariables = Exact<{
 
 export type OpItemsInSiteQuery = { __typename?: 'Query', opItemsInSite: { __typename?: 'OPTopLineItemsWithPagination', pagination: { __typename?: 'PaginationMeta', page: number, size: number, totalCount: number }, items: Array<{ __typename?: 'OPTopLineItem', id: number, businessBaseItemId: number, menuId: number, hasAddons: boolean, name?: string | null, price?: number | null, position: number, images?: { __typename?: 'ItemImages', default?: string | null, defaultLowRes?: string | null, thumbnail?: string | null, thumbnailLowRes?: string | null } | null, discount?: { __typename?: 'ItemDiscountSettings', amount?: number | null, amountPer?: number | null, maxDiscount?: number | null, maxDiscountPer?: number | null } | null, stock?: { __typename?: 'OPStockLevel', amount: number } | null, businessBaseItem: { __typename?: 'OPBusinessBaseItem', id: number, sku?: string | null, brandId?: number | null, businessId: number } }> } };
 
+export type OpTagQueryVariables = Exact<{
+  tagId: Scalars['Int']['input'];
+}>;
 
+
+export type OpTagQuery = { __typename?: 'Query', opTag: { __typename?: 'OPTag', id: number, name: string, type: TagType, images?: { __typename?: 'ItemImages', thumbnail?: string | null, thumbnailLowRes?: string | null, defaultLowRes?: string | null, default?: string | null } | null } };
+
+
+export const OpItemsInSiteForCollectionDocument = gql`
+    query OpItemsInSiteForCollection($siteId: Int!, $tagId: Int!, $pagination: Pagination!) {
+  opItemsInSiteForCollection(
+    siteId: $siteId
+    tagId: $tagId
+    pagination: $pagination
+  ) {
+    items {
+      id
+      name
+      tags {
+        id
+        name
+        tag {
+          id
+          name
+        }
+      }
+      businessBaseItemId
+      businessBaseItem {
+        id
+      }
+      images {
+        default
+        defaultLowRes
+        thumbnail
+        thumbnailLowRes
+      }
+      menuId
+      position
+      price
+      stock {
+        id
+        amount
+      }
+      tax {
+        taxRate
+      }
+      discount {
+        amount
+        maxDiscount
+        maxDiscountPer
+        amountPer
+      }
+      description
+      hasAddons
+    }
+    pagination {
+      page
+      size
+      totalCount
+    }
+  }
+}
+    `;
+
+/**
+ * __useOpItemsInSiteForCollectionQuery__
+ *
+ * To run a query within a React component, call `useOpItemsInSiteForCollectionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOpItemsInSiteForCollectionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOpItemsInSiteForCollectionQuery({
+ *   variables: {
+ *      siteId: // value for 'siteId'
+ *      tagId: // value for 'tagId'
+ *      pagination: // value for 'pagination'
+ *   },
+ * });
+ */
+export function useOpItemsInSiteForCollectionQuery(baseOptions: Apollo.QueryHookOptions<OpItemsInSiteForCollectionQuery, OpItemsInSiteForCollectionQueryVariables> & ({ variables: OpItemsInSiteForCollectionQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OpItemsInSiteForCollectionQuery, OpItemsInSiteForCollectionQueryVariables>(OpItemsInSiteForCollectionDocument, options);
+      }
+export function useOpItemsInSiteForCollectionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpItemsInSiteForCollectionQuery, OpItemsInSiteForCollectionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OpItemsInSiteForCollectionQuery, OpItemsInSiteForCollectionQueryVariables>(OpItemsInSiteForCollectionDocument, options);
+        }
+export function useOpItemsInSiteForCollectionSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpItemsInSiteForCollectionQuery, OpItemsInSiteForCollectionQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<OpItemsInSiteForCollectionQuery, OpItemsInSiteForCollectionQueryVariables>(OpItemsInSiteForCollectionDocument, options);
+        }
+export type OpItemsInSiteForCollectionQueryHookResult = ReturnType<typeof useOpItemsInSiteForCollectionQuery>;
+export type OpItemsInSiteForCollectionLazyQueryHookResult = ReturnType<typeof useOpItemsInSiteForCollectionLazyQuery>;
+export type OpItemsInSiteForCollectionSuspenseQueryHookResult = ReturnType<typeof useOpItemsInSiteForCollectionSuspenseQuery>;
+export type OpItemsInSiteForCollectionQueryResult = Apollo.QueryResult<OpItemsInSiteForCollectionQuery, OpItemsInSiteForCollectionQueryVariables>;
 export const OpSiteDocument = gql`
     query OpSite($siteId: Int!, $typeCollection: TagType, $typeCategory: TagType) {
   opSite(siteId: $siteId) {
@@ -1087,3 +1199,51 @@ export type OpItemsInSiteQueryHookResult = ReturnType<typeof useOpItemsInSiteQue
 export type OpItemsInSiteLazyQueryHookResult = ReturnType<typeof useOpItemsInSiteLazyQuery>;
 export type OpItemsInSiteSuspenseQueryHookResult = ReturnType<typeof useOpItemsInSiteSuspenseQuery>;
 export type OpItemsInSiteQueryResult = Apollo.QueryResult<OpItemsInSiteQuery, OpItemsInSiteQueryVariables>;
+export const OpTagDocument = gql`
+    query OpTag($tagId: Int!) {
+  opTag(tagId: $tagId) {
+    id
+    images {
+      thumbnail
+      thumbnailLowRes
+      defaultLowRes
+      default
+    }
+    name
+    type
+  }
+}
+    `;
+
+/**
+ * __useOpTagQuery__
+ *
+ * To run a query within a React component, call `useOpTagQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOpTagQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOpTagQuery({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *   },
+ * });
+ */
+export function useOpTagQuery(baseOptions: Apollo.QueryHookOptions<OpTagQuery, OpTagQueryVariables> & ({ variables: OpTagQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OpTagQuery, OpTagQueryVariables>(OpTagDocument, options);
+      }
+export function useOpTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpTagQuery, OpTagQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OpTagQuery, OpTagQueryVariables>(OpTagDocument, options);
+        }
+export function useOpTagSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpTagQuery, OpTagQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<OpTagQuery, OpTagQueryVariables>(OpTagDocument, options);
+        }
+export type OpTagQueryHookResult = ReturnType<typeof useOpTagQuery>;
+export type OpTagLazyQueryHookResult = ReturnType<typeof useOpTagLazyQuery>;
+export type OpTagSuspenseQueryHookResult = ReturnType<typeof useOpTagSuspenseQuery>;
+export type OpTagQueryResult = Apollo.QueryResult<OpTagQuery, OpTagQueryVariables>;

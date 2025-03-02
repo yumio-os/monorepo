@@ -1,12 +1,12 @@
 import { Component, createEffect, createSignal } from 'solid-js';
 
-import { HandleNavigateFunc } from '../../pages/kiosk/Kiosk';
+import { NavigationFuncs } from '../../pages/kiosk/Kiosk';
 import { useApollo } from '../../providers/apollo/Apollo';
 import { useAuth } from '../../providers/auth/Auth';
 import stylesNavigationKiosk from './NavigationKiosk.module.css';
 
 const NavigationKiosk: Component<{
-  onNavigate: HandleNavigateFunc;
+  navigate: NavigationFuncs;
   currentPage: string;
 }> = (props) => {
   const { authState, setAuthState } = useAuth();
@@ -32,6 +32,16 @@ const NavigationKiosk: Component<{
       {authState().isAuthenticated && (
         <>
           <ul class="nav nav-pills flex-column m-0 p-0" style="height: 100%; display: flex;">
+            <li class={`nav-item`}>
+              <a class="nav-link link-dark position-relative" onClick={props.navigate.goToMenu}>
+                <i class="bi bi-house"></i>
+              </a>
+            </li>
+            <li class={`nav-item`}>
+              <a class="nav-link link-dark position-relative" onClick={props.navigate.goBack}>
+                <i class="bi bi-arrow-left"></i>
+              </a>
+            </li>
             <li class={`nav-item`}>
               <a class="nav-link link-dark position-relative">
                 <i class="bi bi-cart fs-4"></i>

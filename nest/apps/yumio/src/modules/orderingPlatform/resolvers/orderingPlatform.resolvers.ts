@@ -18,6 +18,12 @@ class ArgsBySiteId {
 }
 
 @ArgsType()
+class ArgsTag {
+  @Field((_) => Int)
+  tagId: number;
+}
+
+@ArgsType()
 class ArgsTagBySiteId {
   @Field((_) => Int)
   siteId: number;
@@ -70,9 +76,15 @@ export class OrderingPlatformResolver {
     return mappedTags;
   }
 
+  @Query((_) => OPTag)
+  async opTag(@Args() { tagId }: ArgsTag): Promise<OPTag> {
+    return await this.tagService.findOneById(tagId);
+  }
+
   @Query((_) => [OPTagMenu])
   async opSiteMenuTags(@Args() { siteId, type }: ArgsTagBySiteId): Promise<OPTagMenu[]> {
-    const tagMenus = await this.tagService.findActiveMenuTagsInSite(siteId, type);
+    // const tagMenus = await this.tagService.findActiveMenuTagsInSite(siteId, type);
+    const tagMenus = await this.tagService.findActiveMenuTagsInSiteWithItems(siteId, type);
     const mappedMenuTags = mapCoreTagMenusToOp(uniq(tagMenus));
     return mappedMenuTags;
   }

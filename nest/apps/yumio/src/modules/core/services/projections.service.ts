@@ -35,6 +35,14 @@ export class ProjectionService {
     relationMap[key]++;
   }
 
+  unwrap(obj, paths: string[]) {
+    let ref = obj;
+    for (const path of paths) {
+      ref = obj?.[path];
+    }
+    return ref;
+  }
+
   // detectNestingLimit(cnt, limit) {
   //   if (cnt >= limit) {
   //     throw new Error(`Query above the nesting limit ${cnt} >= ${limit}`);
@@ -142,14 +150,6 @@ export class ProjectionService {
     this._check(obj, relations, map, prefix, cnt, limit, `tags`, this.tagsMenu.bind(this));
 
     return relations;
-  }
-
-  unwrap(obj, paths: string[]) {
-    let ref = obj;
-    for (const path of paths) {
-      ref = obj?.[path];
-    }
-    return ref;
   }
 
   addons(obj, relations: string[] = [], map = {}, prefix = '', cnt = 0, limit = 10) {
