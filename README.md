@@ -4,47 +4,43 @@ YumioOS is an open-source project designed to empower entrepreneurs who want to 
 
 The core components of YumioOS are free and open-source, allowing anyone to set up and run their own operations efficiently (getting orders from external sources as well). Setup their own system locally, or in futute use hosted one. If the project picks up, future releases will introduce optional premium features for businesses seeking enhanced visual customizations and federated operations.
 
-## Features
-
-### Core Features (Open Source - WORK IN PROGRESS),
+## Core Features (Open Source - WORK IN PROGRESS),
 
 - Menu Management
 - Site Management
 - Brand Management
 - Stock Tracking
-- Integration With External Ordering Platform (manual setting up)
-- POS
-- In Kitchen Order Monitoring (including main, and satelite stations and order flow)
+- Integration With External Ordering Platform
+- Point of Sale System
+- Visual Ordering Sytem
+- Core API
+- Ordering Platform API
+- Order Lifecycle API
+- In House Assistant
 
-The local management is based on TYPEORM and AdminJS integration. API is server as GQL schema. Frontend components are based on SolidJS
+## Vision
 
-# Tech doc
+First stage of the project, is to create a functional backbone of the system. Backone is supposed to stay an OpenSource project. What will be avaialable later, will be hosting service & federation model, where we aim to achieve a true mash network of points, that are coupled by hooking into federation layer.
 
-## NESTJS (nest/\*)
+## Tech
 
-#### Docker
+At the moment weapon of choice is NestJS (TS/NodeJS), running:
 
-Dockerfiles in the `apss/<app>`. Build from root with `-f` (like in CI builds).
+- Apollo GraphQL
+- SolidJS Apps:
+- Kiosk
+- PoS
+- VOS
+- AdminJS
 
-#### ENV
+### AdminJS
 
-All the envs are in the `.`. When adding new, make your example/test.
+As a way for early integration we did setup AdminJS as a way to setup a working data. This does not inferes any logic that we are planning at this point and would require for a person to have understanding of what are rules. We are planning to setup a separate doc about this, but it is under todo for now.
 
-#### Buidling with nest
+### GraphQL
 
-Using nest commands take care of most stuff. But check the webpack, nest-cli (libs build with webpac) and other files around (tsconfig/packag).
+Main API will consists of layer model/queries, giving granular access to data for range of appilaction:
 
-### APPS
-
-apps/yumio - gql
-apps/admin - global backend
-apps/webApp - ordering platform, web kiosk prototype
-
-### LIBS (@yumio/\*)
-
-libs/common
-libs/modules
-
-### CI/CD/CodeScan
-
-Security based on `trivvy` action.
+- core: Gives full access to whole structure of db/ORM. This is gonna be accesible only to admin users, or admin level api keys
+- op: Ordering Platform: public level API/models (optional JWT) for kiosk, ordering web pages
+- ko: Kitchen Operations: private level API/models (required JWT) for PoS, VOS.
