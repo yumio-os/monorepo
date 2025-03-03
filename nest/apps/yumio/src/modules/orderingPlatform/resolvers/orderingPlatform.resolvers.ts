@@ -1,20 +1,30 @@
 import { uniq } from 'lodash';
 
 import { Args, ArgsType, Field, Int, Query, Resolver } from '@nestjs/graphql';
+import { FieldMap } from '@yumio/common';
 import { Brand, Business, TagType } from '@yumio/modules/core';
 
+import { LocationService } from '../../core/services/location.service';
+import { ProjectionService } from '../../core/services/projections.service';
 import { SiteService } from '../../core/services/site.service';
 import { TagService } from '../../core/services/tag.service';
 import { mapCoreBrandsToOp } from '../mappers/brand.mapper';
 import { mapCoreBusinessesToOp } from '../mappers/business.mapper';
+import { mapCoreLocationsToOp, mapCoreLocationToOp } from '../mappers/location.mapper';
 import { mapCoreSiteToOp } from '../mappers/site.mapper';
-import { mapCoreTagMenusToOp, mapCoreTagsToOp } from '../mappers/tag.mapper';
-import { OPBrand, OPBusiness, OPSite, OPTag, OPTagMenu } from '../models/topLineItem.model';
+import { mapCoreTagMenusToOp, mapCoreTagsToOp, mapCoreTagToOp } from '../mappers/tag.mapper';
+import { OPBrand, OPBusiness, OPLocation, OPSite, OPTag, OPTagMenu } from '../models/topLineItem.model';
 
 @ArgsType()
 class ArgsBySiteId {
   @Field((_) => Int)
   siteId: number;
+}
+
+@ArgsType()
+class ArgsLocationId {
+  @Field((_) => Int)
+  locationId: number;
 }
 
 @ArgsType()
@@ -37,6 +47,8 @@ export class OrderingPlatformResolver {
   constructor(
     private siteService: SiteService,
     private tagService: TagService,
+    private locationService: LocationService,
+    private projection: ProjectionService,
   ) {}
 
   @Query((_) => OPSite)
@@ -69,6 +81,20 @@ export class OrderingPlatformResolver {
     return mappedBusiness;
   }
 
+  @Query((_) => [OPLocation])
+  async opSiteLocation(@Args() { siteId }: ArgsBySiteId, @FieldMap() fieldMap): Promise<OPLocation[]> {
+    const relations = this.projection.location(fieldMap);
+
+    const data = await this.locationService.findBySiteId(siteId, relations);
+    return mapCoreLocationsToOp(data);
+  }
+
+  @Query((_) => OPLocation)
+  async opLocation(@Args() { locationId }: ArgsLocationId, @FieldMap() fieldMap): Promise<OPLocation> {
+    const relations = this.projection.location(fieldMap);
+    return mapCoreLocationToOp(await this.locationService.findOneById(locationId, relations));
+  }
+
   @Query((_) => [OPTag])
   async opSiteTags(@Args() { siteId, type }: ArgsTagBySiteId): Promise<OPTag[]> {
     const tags = await this.tagService.findActiveTagsInSite(siteId, type);
@@ -78,7 +104,7 @@ export class OrderingPlatformResolver {
 
   @Query((_) => OPTag)
   async opTag(@Args() { tagId }: ArgsTag): Promise<OPTag> {
-    return await this.tagService.findOneById(tagId);
+    return mapCoreTagToOp(await this.tagService.findOneById(tagId));
   }
 
   @Query((_) => [OPTagMenu])

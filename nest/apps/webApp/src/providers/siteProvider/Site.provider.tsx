@@ -1,10 +1,11 @@
 import { Accessor, createContext, createSignal, Setter, useContext } from 'solid-js';
 
 import { useApollo } from '../apollo/Apollo';
-import { OpOneSiteQuery, OpOneSiteQueryVariables, OpOneSiteTagsQuery, OpSiteQuery } from '../apollo/gql';
+import { OpOneSiteQuery, OpOneSiteQueryVariables, OpOneSiteTagsQuery, OpSiteLocationQuery, OpSiteQuery } from '../apollo/gql';
 import { opOneSite } from '../apollo/queries/site';
 
 type OpSiteTagElement = OpOneSiteTagsQuery['opSiteTags'][number];
+type OpSiteLocationElement = OpSiteLocationQuery['opSiteLocation'][number];
 
 interface SiteContextProps {
   // ----- site
@@ -16,6 +17,8 @@ interface SiteContextProps {
   setSiteCurrentTag: Setter<OpSiteTagElement>;
   // ---- menu tag in site
   // ---- location in site
+  siteCurrentLocation: Accessor<OpSiteLocationElement>;
+  setSiteCurrentLocation: Setter<OpSiteLocationElement>;
 }
 
 const SiteContext = createContext<SiteContextProps>();
@@ -27,7 +30,7 @@ export const SiteProvider = (props) => {
   const [siteDataTs, setSiteDataTs] = createSignal<number>(0);
 
   const [siteCurrentTag, setSiteCurrentTag] = createSignal<OpSiteTagElement>(null);
-  // const [siteCurrentMenuTag, setSiteCurrentMenuTag] = createSignal<OpSiteTagElement | null>(null);
+  const [siteCurrentLocation, setSiteCurrentLocation] = createSignal<OpSiteLocationElement>(null);
 
   const client = useApollo();
 
@@ -55,7 +58,17 @@ export const SiteProvider = (props) => {
   };
 
   return (
-    <SiteContext.Provider value={{ siteData, setSiteData, fetchtSiteData, siteCurrentTag, setSiteCurrentTag }}>
+    <SiteContext.Provider
+      value={{
+        siteData,
+        setSiteData,
+        fetchtSiteData,
+        siteCurrentTag,
+        setSiteCurrentTag,
+        siteCurrentLocation,
+        setSiteCurrentLocation,
+      }}
+    >
       {props.children}
     </SiteContext.Provider>
   );

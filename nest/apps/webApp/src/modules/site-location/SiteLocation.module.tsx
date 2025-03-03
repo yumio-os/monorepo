@@ -3,22 +3,22 @@ import { Component, createEffect, createSignal, onMount } from 'solid-js';
 import { NavigationFuncs } from '../../pages/kiosk/Kiosk';
 import { useApollo } from '../../providers/apollo/Apollo';
 import {
-  OpItemsInSiteForCollectionQuery,
-  OpItemsInSiteForCollectionQueryVariables,
-  OpTagQuery,
-  OpTagQueryVariables,
+  OpItemsInLocationQuery,
+  OpItemsInLocationQueryVariables,
+  OpLocationQuery,
+  OpLocationQueryVariables,
 } from '../../providers/apollo/gql';
-import { opItemsInSiteForCollection } from '../../providers/apollo/queries/itens-site-collections';
-import { OpTag } from '../../providers/apollo/queries/tag';
+import { OpItemsInLocation } from '../../providers/apollo/queries/items-in-location';
+import { OpLocation } from '../../providers/apollo/queries/site';
 import { useSite } from '../../providers/siteProvider/Site.provider';
-import stylesSiteCollections from './SiteCollections.module.css';
+import styleSiteLocation from './SiteLocation.module.css';
 
-interface SiteCollectionsProfilesProps {
+interface SiteLocationProfilesProps {
   navigate: NavigationFuncs;
   currentPage: string;
   params: {
     siteId: string;
-    collectionId: string;
+    locationId: string;
   };
 }
 
@@ -35,12 +35,12 @@ function paginationSanitized(pagination: Pagination) {
   };
 }
 
-const SiteCollections: Component<SiteCollectionsProfilesProps> = (props) => {
-  const [itemsCollection, setItemsCollection] = createSignal<OpItemsInSiteForCollectionQuery['opItemsInSiteForCollection']['items']>([]);
+const SiteLocation: Component<SiteLocationProfilesProps> = (props) => {
+  const [itemsLocation, setItemsLoocation] = createSignal<OpItemsInLocationQuery['opItemsInLocation']['items']>([]);
   const [errorSiteState, setErrorSiteState] = createSignal<any>(null);
   const [loadingState, setLoadingState] = createSignal(false);
 
-  const [collectionId, setCollectionId] = createSignal<string | null>(null); //
+  const [locationId, setLocationId] = createSignal<string | null>(null); //
 
   const [pagination, setPagination] = createSignal<Pagination>({
     page: 1,
@@ -48,19 +48,17 @@ const SiteCollections: Component<SiteCollectionsProfilesProps> = (props) => {
     totalCount: 0,
   });
 
-  const { siteData, siteCurrentTag, setSiteCurrentTag } = useSite();
+  const { siteCurrentLocation, setSiteCurrentLocation } = useSite();
 
   const client = useApollo();
 
   const loadData = async () => {
-    if (props.params.siteId && props.params.collectionId) {
-      // console.log(mountRetry());
-      if (props.params.collectionId == collectionId()) {
+    if (props?.params?.siteId && props?.params?.locationId) {
+      if (props?.params?.locationId == locationId()) {
         return;
       }
 
-      setCollectionId(props.params.collectionId);
-
+      setLocationId(props?.params?.locationId);
       if (loadingState() == true) {
         return;
       }
@@ -71,45 +69,47 @@ const SiteCollections: Component<SiteCollectionsProfilesProps> = (props) => {
       await Promise.allSettled([
         // pull tag
         (async () => {
-          const tagSet = !!(siteCurrentTag()?.id || 0);
-          const tagChanged = siteCurrentTag()?.id != Number(props.params.collectionId);
-          const okProp = !!props.params.collectionId;
+          const locationSet = !!(siteCurrentLocation()?.id || 0);
+          const locationChanged = siteCurrentLocation()?.id != Number(props?.params?.locationId);
+          const okProp = !!props?.params?.locationId;
 
-          if (okProp && (!tagSet || tagChanged)) {
+          if (okProp && (!locationSet || locationChanged)) {
             await client
-              .query<OpTagQuery, OpTagQueryVariables>({
-                query: OpTag,
+              .query<OpLocationQuery, OpLocationQueryVariables>({
+                query: OpLocation,
                 variables: {
-                  tagId: Number(props.params.collectionId),
+                  locationId: Number(locationId()),
                 },
               })
               .then((resp) => {
-                setSiteCurrentTag(resp?.data?.opTag);
+                setSiteCurrentLocation(resp?.data?.opLocation);
               })
-              .catch((_) => {
-                return null;
-              });
+              .catch((_) => null);
           }
         })(),
 
-        // ITEMS IN TAG/CATEGORY
+        // ITEMS IN Location IN Site
         (async () => {
           await client
-            .query<OpItemsInSiteForCollectionQuery, OpItemsInSiteForCollectionQueryVariables>({
-              query: opItemsInSiteForCollection,
+            .query<OpItemsInLocationQuery, OpItemsInLocationQueryVariables>({
+              query: OpItemsInLocation,
               variables: {
-                siteId: Number(props.params.siteId),
-                tagId: Number(props.params.collectionId),
+                locationId: Number(props.params?.locationId),
                 pagination: paginationSanitized(pagination()),
               },
-              // fetchPolicy: 'no-cache', // allow cache for now as is
             })
             .then((resp) => {
-              setPagination(resp?.data?.opItemsInSiteForCollection?.pagination);
-              setItemsCollection(resp?.data?.opItemsInSiteForCollection?.items || []);
+              setPagination(resp?.data?.opItemsInLocation?.pagination);
+              setItemsLoocation(resp?.data?.opItemsInLocation?.items || []);
             })
             .catch((_) => setErrorSiteState(_));
         })(),
+
+        // Brands in Location - location config
+
+        // Categories in location - location config
+
+        // Collection in location - location config
       ]);
 
       setLoadingState(false);
@@ -126,22 +126,22 @@ const SiteCollections: Component<SiteCollectionsProfilesProps> = (props) => {
 
   return (
     <>
-      <div class={`d-flex justify-content-center align-items-center ${stylesSiteCollections.Site} px-5 py-2`}>
+      <div class={`d-flex justify-content-center align-items-center ${styleSiteLocation.Site} px-5 py-2`}>
         {loadingState() && <p>Loading site tag data...</p>}
         {errorSiteState() && <p>Error: {errorSiteState()}</p>}
         {/* Check if siteData exists */}
         {/* <div>test {`${itemsCollection().length}`}</div> */}
 
         <div class="card text-center container-fluid p-0">
-          <div class={`card-img-top overflow-hidden position-relative ${stylesSiteCollections.CustomImgContainer}`}>
+          <div class={`card-img-top overflow-hidden position-relative ${styleSiteLocation.CustomImgContainer}`}>
             <img
-              src={siteCurrentTag()?.images?.default || 'https://via.placeholder.com/150'}
-              class={`img-fluid ${stylesSiteCollections.CustomImg}`}
-              alt={siteCurrentTag()?.name}
+              src={siteCurrentLocation()?.business.images?.default || 'https://via.placeholder.com/150'}
+              class={`img-fluid ${styleSiteLocation.CustomImg}`}
+              alt={siteCurrentLocation()?.name}
             />
             {/* overlay this section over image, so it is on the bottom of card-img-top */}
             <div class="overlay-content position-absolute bottom-0 w-100 p-3 text-white text-start" style="backgroun(0, 0, 0, 0.5);">
-              <h5 class="cardd: rgba-title m-0">TAG {siteCurrentTag()?.name}</h5>
+              <h5 class="cardd: rgba-title m-0">{siteCurrentLocation()?.name}</h5>
               {/* <p class="card-text m-0">Location Address and some other info</p> */}
             </div>
           </div>
@@ -149,13 +149,13 @@ const SiteCollections: Component<SiteCollectionsProfilesProps> = (props) => {
             <div id="siteCarouselItemsInSiteByTag" class="my-2">
               <div class="container-fluid">
                 <div class="d-flex flex-row flex-nowrap overflow-auto">
-                  {itemsCollection().map((item) => (
+                  {itemsLocation().map((item) => (
                     <div class="col-sm-3">
                       <div class="card me-2">
-                        <div class={`card-img-top overflow-hidden ${stylesSiteCollections.CustomCardImageContainer}`}>
+                        <div class={`card-img-top overflow-hidden ${styleSiteLocation.CustomCardImageContainer}`}>
                           <img
                             src={item?.images?.default || 'https://via.placeholder.com/150'}
-                            class={`img-fluid ${stylesSiteCollections.CustomImg}`}
+                            class={`img-fluid ${styleSiteLocation.CustomImg}`}
                             alt={item.name}
                           />
                         </div>
@@ -169,8 +169,8 @@ const SiteCollections: Component<SiteCollectionsProfilesProps> = (props) => {
           </div>
 
           {/* Fallback if no site data is available */}
-          {!loadingState() && itemsCollection()?.length == 0 && (
-            <p>Something went wrong {`${loadingState()} - ${props.params.siteId} - ${props.params.collectionId}`}</p>
+          {!loadingState() && itemsLocation()?.length == 0 && (
+            <p>Something went wrong {`${loadingState()} - ${props?.params?.siteId} - ${props?.params?.locationId}`}</p>
           )}
         </div>
       </div>
@@ -178,4 +178,4 @@ const SiteCollections: Component<SiteCollectionsProfilesProps> = (props) => {
   );
 };
 
-export default SiteCollections;
+export default SiteLocation;

@@ -7,24 +7,24 @@ import {
   OpItemsInSiteQueryVariables,
   OpOneSiteBrandQuery,
   OpOneSiteBrandQueryVariables,
-  OpOneSiteBusinessQuery,
-  OpOneSiteBusinessQueryVariables,
   OpOneSiteMenuTagsCategoryQuery,
   OpOneSiteMenuTagsCategoryQueryVariables,
   OpOneSiteMenuTagsCollectionQuery,
   OpOneSiteMenuTagsCollectionQueryVariables,
   OpOneSiteTagsQuery,
   OpOneSiteTagsQueryVariables,
+  OpSiteLocationQuery,
+  OpSiteLocationQueryVariables,
   OpSiteQuery,
   TagType,
 } from '../../providers/apollo/gql';
 import {
   opItemsInSite,
   opOneSiteBrand,
-  opOneSiteBusiness,
   opOneSiteMenuTagsCategory,
   opOneSiteMenuTagsCollection,
   opOneSiteTags,
+  OpSiteLocation,
 } from '../../providers/apollo/queries/site';
 import { useSite } from '../../providers/siteProvider/Site.provider';
 import stylesSite from './Site.module.css';
@@ -38,19 +38,18 @@ interface SiteProfilesProps {
 }
 
 const Site: Component<SiteProfilesProps> = (props) => {
-  // Create a signal to store the ID from the URL
-  // const [siteData, setSiteData] = createSignal<OpSiteQuery['opSite'] | null>(null);
-  const [brandsData, setBrandsData] = createSignal<OpSiteQuery['opSiteBrands'] | null>(null);
-  const [businessData, setBusinessData] = createSignal<OpSiteQuery['opSiteBusiness'] | null>(null);
-  const [tagsData, setTagsData] = createSignal<OpSiteQuery['opSiteTags'] | null>(null);
-  const [menuTagsCollectionData, setMenuTagsCollectionData] = createSignal<OpSiteQuery['opSiteMenuTagsCollection'] | null>(null);
-  const [menuTagsCategoryData, setMenuTagsCategoryData] = createSignal<OpSiteQuery['opSiteMenuTagsCategory'] | null>(null);
-  const [itemsData, setItemsData] = createSignal<OpItemsInSiteQuery['opItemsInSite']['items'] | null>(null);
+  const [brandsData, setBrandsData] = createSignal<OpSiteQuery['opSiteBrands']>([]);
+  const [locationData, setLocationData] = createSignal<OpSiteLocationQuery['opSiteLocation']>([]);
+
+  const [tagsData, setTagsData] = createSignal<OpSiteQuery['opSiteTags']>([]);
+  const [menuTagsCollectionData, setMenuTagsCollectionData] = createSignal<OpSiteQuery['opSiteMenuTagsCollection']>([]);
+  const [menuTagsCategoryData, setMenuTagsCategoryData] = createSignal<OpSiteQuery['opSiteMenuTagsCategory']>([]);
+  const [itemsData, setItemsData] = createSignal<OpItemsInSiteQuery['opItemsInSite']['items']>([]);
 
   const [errorSiteState, setErrorSiteState] = createSignal<any>(null);
   const [loadingState, setLoadingState] = createSignal(false);
 
-  const { siteData, setSiteCurrentTag } = useSite();
+  const { siteData, setSiteCurrentTag, setSiteCurrentLocation } = useSite();
 
   const client = useApollo();
 
@@ -64,19 +63,6 @@ const Site: Component<SiteProfilesProps> = (props) => {
       setLoadingState(true);
 
       await Promise.allSettled([
-        // (async () => {
-        //   setSiteData(
-        //     await client
-        //       .query<OpOneSiteQuery, OpOneSiteQueryVariables>({
-        //         query: opOneSite,
-        //         variables: {
-        //           siteId: Number(props?.params?.siteId),
-        //         },
-        //       })
-        //       .then((resp) => resp?.data?.opSite)
-        //       .catch((_) => null),
-        //   );
-        // })(),
         (async () => {
           setItemsData(
             await client
@@ -91,7 +77,10 @@ const Site: Component<SiteProfilesProps> = (props) => {
                 },
               })
               .then((resp) => resp?.data?.opItemsInSite.items)
-              .catch((_) => null),
+              .catch((e) => {
+                console.log(e);
+                return [];
+              }),
           );
         })(),
         (async () => {
@@ -104,22 +93,29 @@ const Site: Component<SiteProfilesProps> = (props) => {
                 },
               })
               .then((resp) => resp?.data?.opSiteBrands)
-              .catch((_) => null),
+              .catch((e) => {
+                console.log(e);
+                return [];
+              }),
           );
         })(),
         (async () => {
-          setBusinessData(
+          setLocationData(
             await client
-              .query<OpOneSiteBusinessQuery, OpOneSiteBusinessQueryVariables>({
-                query: opOneSiteBusiness,
+              .query<OpSiteLocationQuery, OpSiteLocationQueryVariables>({
+                query: OpSiteLocation,
                 variables: {
                   siteId: Number(props?.params?.siteId),
                 },
               })
-              .then((resp) => resp?.data?.opSiteBusiness)
-              .catch((_) => null),
+              .then((resp) => resp?.data?.opSiteLocation)
+              .catch((e) => {
+                console.log(e);
+                return [];
+              }),
           );
         })(),
+
         (async () => {
           setTagsData(
             await client
@@ -130,7 +126,10 @@ const Site: Component<SiteProfilesProps> = (props) => {
                 },
               })
               .then((resp) => resp?.data?.opSiteTags)
-              .catch((_) => null),
+              .catch((e) => {
+                console.log(e);
+                return [];
+              }),
           );
         })(),
         (async () => {
@@ -144,7 +143,10 @@ const Site: Component<SiteProfilesProps> = (props) => {
                 },
               })
               .then((resp) => resp?.data?.opSiteMenuTagsCategory)
-              .catch((_) => null),
+              .catch((e) => {
+                console.log(e);
+                return [];
+              }),
           );
         })(),
         (async () => {
@@ -158,7 +160,10 @@ const Site: Component<SiteProfilesProps> = (props) => {
                 },
               })
               .then((resp) => resp?.data?.opSiteMenuTagsCollection)
-              .catch((_) => null),
+              .catch((e) => {
+                console.log(e);
+                return [];
+              }),
           );
         })(),
       ]);
@@ -246,22 +251,32 @@ const Site: Component<SiteProfilesProps> = (props) => {
               )}
 
               {/* BUSINESS  min 2*/}
-              {businessData() && businessData()?.length > 0 && (
+              {locationData() && locationData()?.length > 0 && (
                 <div id="siteCarouselBusiness" class="my-2">
                   <h2 class="text-start">Restaurants</h2>
                   <div class="container-fluid">
                     <div class="d-flex flex-row flex-nowrap overflow-auto">
-                      {businessData().map((business) => (
+                      {locationData().map((location) => (
                         <div class="col-sm-3">
-                          <div class="card me-2">
+                          <div
+                            class="card me-2"
+                            onClick={() => {
+                              setSiteCurrentLocation(location);
+                              props.navigate.onNavigate('siteLocation', {
+                                siteId: props?.params?.siteId,
+                                locationId: location.id,
+                                ts: Date.now(),
+                              });
+                            }}
+                          >
                             <div class={`card-img-top overflow-hidden ${stylesSite.CustomCardImageContainer}`}>
                               <img
-                                src={business?.images?.default || 'https://via.placeholder.com/150'}
+                                src={location?.business?.images?.default || 'https://via.placeholder.com/150'}
                                 class={`img-fluid ${stylesSite.CustomImg}`}
-                                alt={business.name}
+                                alt={location?.name}
                               />
                             </div>
-                            <div class="card-body">{business?.name}</div>
+                            <div class="card-body">{location?.name}</div>
                           </div>
                         </div>
                       ))}
@@ -282,7 +297,11 @@ const Site: Component<SiteProfilesProps> = (props) => {
                             class="card me-2"
                             onClick={() => {
                               setSiteCurrentTag(menuTag.tag);
-                              props.navigate.onNavigate('siteCollection', { siteId: props?.params?.siteId, collectionId: menuTag.tag.id });
+                              props.navigate.onNavigate('siteCollection', {
+                                siteId: props?.params?.siteId,
+                                collectionId: menuTag.tag.id,
+                                ts: Date.now(),
+                              });
                             }}
                           >
                             <div class={`card-img-top overflow-hidden ${stylesSite.CustomCardIconContainer}`}>
@@ -313,7 +332,11 @@ const Site: Component<SiteProfilesProps> = (props) => {
                             class="card me-2"
                             onClick={() => {
                               setSiteCurrentTag(menuTag.tag);
-                              props.navigate.onNavigate('siteCollection', { siteId: props?.params?.siteId, collectionId: menuTag.tag.id });
+                              props.navigate.onNavigate('siteCollection', {
+                                siteId: props?.params?.siteId,
+                                collectionId: menuTag.tag.id,
+                                ts: Date.now(),
+                              });
                             }}
                           >
                             <div class={`card-img-top overflow-hidden ${stylesSite.CustomCardIconContainer}`}>

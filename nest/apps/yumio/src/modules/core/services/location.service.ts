@@ -14,4 +14,8 @@ export class LocationService {
   async findOneById(id: number, relations = [], entityManager = this.repo.manager) {
     return entityManager.findOne(Location, { where: { id }, relations });
   }
+
+  async findBySiteId(siteId: number, relations = [], entityManager = this.repo.manager) {
+    return entityManager.find(Location, { where: { siteId }, relations });
+  }
 }

@@ -3,6 +3,7 @@ import { render } from 'solid-js/web';
 
 import NavigationKiosk from '../../modules/navigation-kiosk/NavigationKiosk';
 import SiteCollections from '../../modules/site-collections/SiteCollections';
+import SiteLocation from '../../modules/site-location/SiteLocation.module';
 import Site from '../../modules/site/Site';
 import { ApolloProvider, useApollo } from '../../providers/apollo/Apollo';
 import { AuthProvider, useAuth } from '../../providers/auth/Auth';
@@ -15,6 +16,8 @@ const pages = {
   landing: 'landing',
   site: 'site',
   siteCollection: 'siteCollection',
+  siteLocation: 'siteLocation',
+  // ----
   item: 'item',
   basket: 'basket',
   activeOrder: 'activeOrder',
@@ -26,6 +29,8 @@ const pageParameterSchema = {
   landing: ['siteId', 'otp'],
   site: ['siteId', 'otp'],
   siteCollection: ['siteId', 'collectionId', 'otp'],
+  siteLocation: ['siteId', 'locationId', 'otp'],
+  // ----
   item: ['siteId', 'menuId', 'itemId', 'otp'],
   basket: ['siteId', 'otp'],
   activeOrder: ['otp', 'orderId'],
@@ -185,6 +190,15 @@ const Kiosk: Component = (): JSXElement => {
             currentPage={currentPage()}
             params={{ siteId: pageParams().siteId, collectionId: pageParams().collectionId }}
           />
+        );
+
+      case 'siteLocation':
+        return (
+          <SiteLocation
+            navigate={navigate}
+            currentPage={currentPage()}
+            params={{ siteId: pageParams().siteId, locationId: pageParams().locationId }}
+          ></SiteLocation>
         );
     }
   };

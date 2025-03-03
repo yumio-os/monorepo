@@ -255,9 +255,21 @@ export type OpBusinessBaseItem = {
   sku?: Maybe<Scalars['String']['output']>;
 };
 
+export type OpLocation = {
+  __typename?: 'OPLocation';
+  business: OpBusiness;
+  businessId: Scalars['Int']['output'];
+  id: Scalars['Int']['output'];
+  menus: Array<OpMenu>;
+  name: Scalars['String']['output'];
+  shortName: Scalars['String']['output'];
+  tax?: Maybe<TaxSettings>;
+};
+
 export type OpMenu = {
   __typename?: 'OPMenu';
   businessId: Scalars['Int']['output'];
+  default: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
   items: Array<OpTopLineItem>;
   name: Scalars['String']['output'];
@@ -351,9 +363,11 @@ export type Query = {
   opItemsInSiteBrandForCollection: OpTopLineItemsWithPagination;
   opItemsInSiteForBrand: OpTopLineItemsWithPagination;
   opItemsInSiteForCollection: OpTopLineItemsWithPagination;
+  opLocation: OpLocation;
   opSite: OpSite;
   opSiteBrands: Array<OpBrand>;
   opSiteBusiness: Array<OpBusiness>;
+  opSiteLocation: Array<OpLocation>;
   opSiteMenuTags: Array<OpTagMenu>;
   opSiteTags: Array<OpTag>;
   opTag: OpTag;
@@ -465,6 +479,11 @@ export type QueryOpItemsInSiteForCollectionArgs = {
 };
 
 
+export type QueryOpLocationArgs = {
+  locationId: Scalars['Int']['input'];
+};
+
+
 export type QueryOpSiteArgs = {
   siteId: Scalars['Int']['input'];
 };
@@ -476,6 +495,11 @@ export type QueryOpSiteBrandsArgs = {
 
 
 export type QueryOpSiteBusinessArgs = {
+  siteId: Scalars['Int']['input'];
+};
+
+
+export type QueryOpSiteLocationArgs = {
   siteId: Scalars['Int']['input'];
 };
 
@@ -575,6 +599,14 @@ export type TaxSettings = {
   taxRate?: Maybe<Scalars['Int']['output']>;
 };
 
+export type OpItemsInLocationQueryVariables = Exact<{
+  locationId: Scalars['Int']['input'];
+  pagination: Pagination;
+}>;
+
+
+export type OpItemsInLocationQuery = { __typename?: 'Query', opItemsInLocation: { __typename?: 'OPTopLineItemsWithPagination', pagination: { __typename?: 'PaginationMeta', page: number, size: number, totalCount: number }, items: Array<{ __typename?: 'OPTopLineItem', businessBaseItemId: number, description?: string | null, price?: number | null, position: number, name?: string | null, menuId: number, id: number, hasAddons: boolean, discount?: { __typename?: 'ItemDiscountSettings', amount?: number | null, amountPer?: number | null, maxDiscount?: number | null, maxDiscountPer?: number | null } | null, stock?: { __typename?: 'OPStockLevel', id: number, amount: number } | null, images?: { __typename?: 'ItemImages', thumbnailLowRes?: string | null, thumbnail?: string | null, defaultLowRes?: string | null, default?: string | null } | null, businessBaseItem: { __typename?: 'OPBusinessBaseItem', allowAsModfier: boolean, allowAsAddon: boolean, excludeFromTop: boolean, id: number, sku?: string | null, brandId?: number | null } }> } };
+
 export type OpItemsInSiteForCollectionQueryVariables = Exact<{
   siteId: Scalars['Int']['input'];
   tagId: Scalars['Int']['input'];
@@ -613,6 +645,20 @@ export type OpOneSiteBusinessQueryVariables = Exact<{
 
 
 export type OpOneSiteBusinessQuery = { __typename?: 'Query', opSiteBusiness: Array<{ __typename?: 'OPBusiness', id: number, name: string, shortName: string, images?: { __typename?: 'ItemImages', default?: string | null } | null }> };
+
+export type OpSiteLocationQueryVariables = Exact<{
+  siteId: Scalars['Int']['input'];
+}>;
+
+
+export type OpSiteLocationQuery = { __typename?: 'Query', opSiteLocation: Array<{ __typename?: 'OPLocation', id: number, businessId: number, name: string, shortName: string, business: { __typename?: 'OPBusiness', id: number, name: string, images?: { __typename?: 'ItemImages', default?: string | null, defaultLowRes?: string | null, thumbnail?: string | null, thumbnailLowRes?: string | null } | null } }> };
+
+export type OpLocationQueryVariables = Exact<{
+  locationId: Scalars['Int']['input'];
+}>;
+
+
+export type OpLocationQuery = { __typename?: 'Query', opLocation: { __typename?: 'OPLocation', id: number, businessId: number, name: string, shortName: string, business: { __typename?: 'OPBusiness', id: number, name: string, shortName: string, images?: { __typename?: 'ItemImages', default?: string | null, defaultLowRes?: string | null, thumbnail?: string | null, thumbnailLowRes?: string | null } | null }, tax?: { __typename?: 'TaxSettings', inclusive?: boolean | null, taxRate?: number | null } | null, menus: Array<{ __typename?: 'OPMenu', id: number, default: boolean, name: string }> } };
 
 export type OpOneSiteTagsQueryVariables = Exact<{
   siteId: Scalars['Int']['input'];
@@ -653,6 +699,85 @@ export type OpTagQueryVariables = Exact<{
 export type OpTagQuery = { __typename?: 'Query', opTag: { __typename?: 'OPTag', id: number, name: string, type: TagType, images?: { __typename?: 'ItemImages', thumbnail?: string | null, thumbnailLowRes?: string | null, defaultLowRes?: string | null, default?: string | null } | null } };
 
 
+export const OpItemsInLocationDocument = gql`
+    query OpItemsInLocation($locationId: Int!, $pagination: Pagination!) {
+  opItemsInLocation(locationId: $locationId, pagination: $pagination) {
+    pagination {
+      page
+      size
+      totalCount
+    }
+    items {
+      businessBaseItemId
+      description
+      discount {
+        amount
+        amountPer
+        maxDiscount
+        maxDiscountPer
+      }
+      price
+      position
+      stock {
+        id
+        amount
+      }
+      name
+      menuId
+      images {
+        thumbnailLowRes
+        thumbnail
+        defaultLowRes
+        default
+      }
+      id
+      hasAddons
+      businessBaseItem {
+        allowAsModfier
+        allowAsAddon
+        excludeFromTop
+        id
+        sku
+        brandId
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useOpItemsInLocationQuery__
+ *
+ * To run a query within a React component, call `useOpItemsInLocationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOpItemsInLocationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOpItemsInLocationQuery({
+ *   variables: {
+ *      locationId: // value for 'locationId'
+ *      pagination: // value for 'pagination'
+ *   },
+ * });
+ */
+export function useOpItemsInLocationQuery(baseOptions: Apollo.QueryHookOptions<OpItemsInLocationQuery, OpItemsInLocationQueryVariables> & ({ variables: OpItemsInLocationQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OpItemsInLocationQuery, OpItemsInLocationQueryVariables>(OpItemsInLocationDocument, options);
+      }
+export function useOpItemsInLocationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpItemsInLocationQuery, OpItemsInLocationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OpItemsInLocationQuery, OpItemsInLocationQueryVariables>(OpItemsInLocationDocument, options);
+        }
+export function useOpItemsInLocationSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpItemsInLocationQuery, OpItemsInLocationQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<OpItemsInLocationQuery, OpItemsInLocationQueryVariables>(OpItemsInLocationDocument, options);
+        }
+export type OpItemsInLocationQueryHookResult = ReturnType<typeof useOpItemsInLocationQuery>;
+export type OpItemsInLocationLazyQueryHookResult = ReturnType<typeof useOpItemsInLocationLazyQuery>;
+export type OpItemsInLocationSuspenseQueryHookResult = ReturnType<typeof useOpItemsInLocationSuspenseQuery>;
+export type OpItemsInLocationQueryResult = Apollo.QueryResult<OpItemsInLocationQuery, OpItemsInLocationQueryVariables>;
 export const OpItemsInSiteForCollectionDocument = gql`
     query OpItemsInSiteForCollection($siteId: Int!, $tagId: Int!, $pagination: Pagination!) {
   opItemsInSiteForCollection(
@@ -976,6 +1101,122 @@ export type OpOneSiteBusinessQueryHookResult = ReturnType<typeof useOpOneSiteBus
 export type OpOneSiteBusinessLazyQueryHookResult = ReturnType<typeof useOpOneSiteBusinessLazyQuery>;
 export type OpOneSiteBusinessSuspenseQueryHookResult = ReturnType<typeof useOpOneSiteBusinessSuspenseQuery>;
 export type OpOneSiteBusinessQueryResult = Apollo.QueryResult<OpOneSiteBusinessQuery, OpOneSiteBusinessQueryVariables>;
+export const OpSiteLocationDocument = gql`
+    query OpSiteLocation($siteId: Int!) {
+  opSiteLocation(siteId: $siteId) {
+    id
+    businessId
+    name
+    shortName
+    business {
+      id
+      name
+      images {
+        default
+        defaultLowRes
+        thumbnail
+        thumbnailLowRes
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useOpSiteLocationQuery__
+ *
+ * To run a query within a React component, call `useOpSiteLocationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOpSiteLocationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOpSiteLocationQuery({
+ *   variables: {
+ *      siteId: // value for 'siteId'
+ *   },
+ * });
+ */
+export function useOpSiteLocationQuery(baseOptions: Apollo.QueryHookOptions<OpSiteLocationQuery, OpSiteLocationQueryVariables> & ({ variables: OpSiteLocationQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OpSiteLocationQuery, OpSiteLocationQueryVariables>(OpSiteLocationDocument, options);
+      }
+export function useOpSiteLocationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpSiteLocationQuery, OpSiteLocationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OpSiteLocationQuery, OpSiteLocationQueryVariables>(OpSiteLocationDocument, options);
+        }
+export function useOpSiteLocationSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpSiteLocationQuery, OpSiteLocationQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<OpSiteLocationQuery, OpSiteLocationQueryVariables>(OpSiteLocationDocument, options);
+        }
+export type OpSiteLocationQueryHookResult = ReturnType<typeof useOpSiteLocationQuery>;
+export type OpSiteLocationLazyQueryHookResult = ReturnType<typeof useOpSiteLocationLazyQuery>;
+export type OpSiteLocationSuspenseQueryHookResult = ReturnType<typeof useOpSiteLocationSuspenseQuery>;
+export type OpSiteLocationQueryResult = Apollo.QueryResult<OpSiteLocationQuery, OpSiteLocationQueryVariables>;
+export const OpLocationDocument = gql`
+    query OpLocation($locationId: Int!) {
+  opLocation(locationId: $locationId) {
+    id
+    businessId
+    business {
+      id
+      images {
+        default
+        defaultLowRes
+        thumbnail
+        thumbnailLowRes
+      }
+      name
+      shortName
+    }
+    name
+    shortName
+    tax {
+      inclusive
+      taxRate
+    }
+    menus {
+      id
+      default
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useOpLocationQuery__
+ *
+ * To run a query within a React component, call `useOpLocationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOpLocationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOpLocationQuery({
+ *   variables: {
+ *      locationId: // value for 'locationId'
+ *   },
+ * });
+ */
+export function useOpLocationQuery(baseOptions: Apollo.QueryHookOptions<OpLocationQuery, OpLocationQueryVariables> & ({ variables: OpLocationQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OpLocationQuery, OpLocationQueryVariables>(OpLocationDocument, options);
+      }
+export function useOpLocationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OpLocationQuery, OpLocationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OpLocationQuery, OpLocationQueryVariables>(OpLocationDocument, options);
+        }
+export function useOpLocationSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OpLocationQuery, OpLocationQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<OpLocationQuery, OpLocationQueryVariables>(OpLocationDocument, options);
+        }
+export type OpLocationQueryHookResult = ReturnType<typeof useOpLocationQuery>;
+export type OpLocationLazyQueryHookResult = ReturnType<typeof useOpLocationLazyQuery>;
+export type OpLocationSuspenseQueryHookResult = ReturnType<typeof useOpLocationSuspenseQuery>;
+export type OpLocationQueryResult = Apollo.QueryResult<OpLocationQuery, OpLocationQueryVariables>;
 export const OpOneSiteTagsDocument = gql`
     query OpOneSiteTags($siteId: Int!) {
   opSiteTags(siteId: $siteId) {

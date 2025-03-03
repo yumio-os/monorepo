@@ -12,6 +12,8 @@ export function mapCoreMenuToOp(cmenu: Menu) {
 
   target.items = mapCoreMenuBaseItemsToTopItem(cmenu.items);
 
+  target.default = cmenu.default;
+
   return target;
 }
 

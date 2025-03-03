@@ -103,6 +103,58 @@ export const opOneSiteBusiness = gql`
   }
 `;
 
+export const OpSiteLocation = gql`
+  query OpSiteLocation($siteId: Int!) {
+    opSiteLocation(siteId: $siteId) {
+      id
+      businessId
+      name
+      shortName
+      business {
+        id
+        name
+        images {
+          default
+          defaultLowRes
+          thumbnail
+          thumbnailLowRes
+        }
+      }
+    }
+  }
+`;
+
+export const OpLocation = gql`
+  query OpLocation($locationId: Int!) {
+    opLocation(locationId: $locationId) {
+      id
+      businessId
+      business {
+        id
+        images {
+          default
+          defaultLowRes
+          thumbnail
+          thumbnailLowRes
+        }
+        name
+        shortName
+      }
+      name
+      shortName
+      tax {
+        inclusive
+        taxRate
+      }
+      menus {
+        id
+        default
+        name
+      }
+    }
+  }
+`;
+
 export const opOneSiteTags = gql`
   query OpOneSiteTags($siteId: Int!) {
     opSiteTags(siteId: $siteId) {

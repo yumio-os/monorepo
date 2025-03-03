@@ -1,6 +1,7 @@
 import { Location } from '@yumio/modules/core';
 
 import { OPLocation } from '../models/topLineItem.model';
+import { mapCoreBusinessToOp } from './business.mapper';
 import { mapCoreMenusToOp } from './menu.mapper';
 
 export function mapCoreLocationToOp(cLocation: Location): OPLocation {
@@ -18,6 +19,7 @@ export function mapCoreLocationToOp(cLocation: Location): OPLocation {
   target.tax = cLocation.tax;
 
   target.menus = mapCoreMenusToOp(cLocation.menus);
+  target.business = mapCoreBusinessToOp(cLocation.business);
 
   return target;
 }

@@ -77,6 +77,7 @@ export class MenuBaseItemService {
     };
 
     this.fillWhereMenuActive(query, active);
+    this.findInLocationOnlyTopLineItems(query);
     this.handlePagination(query, pagination);
 
     return entityManager.find(MenuBaseItem, query);
@@ -88,6 +89,7 @@ export class MenuBaseItemService {
     };
 
     this.fillWhereMenuActive(query, active);
+    this.findInLocationOnlyTopLineItems(query);
 
     return entityManager.count(MenuBaseItem, query);
   }
@@ -102,6 +104,22 @@ export class MenuBaseItemService {
     };
   }
 
+  private findInLocationOnlyTopLineItems(query, excludeFromTop = false) {
+    if (!query) {
+      return;
+    }
+
+    if (!query?.where) {
+      return;
+    }
+
+    if (!query.where['businessBaseItem']) {
+      query.where['businessBaseItem'] = {};
+    }
+
+    query.where.businessBaseItem.excludeFromTop = excludeFromTop;
+  }
+
   findInLocation(locationId: number, active?: boolean, relations = [], pagination?: Pagination, entityManager = this.repo.manager) {
     const query = {
       where: this.findInLocationWhere(locationId),
@@ -109,6 +127,7 @@ export class MenuBaseItemService {
     };
 
     this.fillWhereMenuActive(query, active);
+    this.findInLocationOnlyTopLineItems(query);
     this.handlePagination(query, pagination);
 
     return entityManager.find(MenuBaseItem, query);
@@ -120,6 +139,7 @@ export class MenuBaseItemService {
     };
 
     this.fillWhereMenuActive(query, active);
+    this.findInLocationOnlyTopLineItems(query);
 
     return entityManager.count(MenuBaseItem, query);
   }

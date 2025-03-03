@@ -152,6 +152,9 @@ export class OPMenu {
 
   @Field((_) => [OPTopLineItem], { defaultValue: [] })
   items: OPTopLineItem[];
+
+  @Field((_) => Boolean, { defaultValue: false })
+  default: boolean;
 }
 
 @ObjectType()
@@ -173,6 +176,9 @@ export class OPLocation {
 
   @Field((_) => Int)
   businessId: number;
+
+  @Field((_) => OPBusiness)
+  business: OPBusiness;
 }
 
 @ObjectType()

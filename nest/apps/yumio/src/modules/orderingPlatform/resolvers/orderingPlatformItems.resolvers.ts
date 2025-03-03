@@ -164,10 +164,11 @@ export class OrderingPlatformItemsResolver {
     @Args() { locationId, pagination }: ArgsItemsByLocationId,
   ): Promise<OPTopLineItemsWithPagination> {
     const response = new OPTopLineItemsWithPagination();
+    const relations = this.projection.itemsMenu(this.projection.unwrap(fieldMap, ['items']));
 
     await Promise.all([
       (async () => {
-        const items = await this.menuBaseItemService.findInLocation(locationId, true, this.projection.itemsMenu(fieldMap), pagination);
+        const items = await this.menuBaseItemService.findInLocation(locationId, true, relations, pagination);
         response.items = mapCoreMenuBaseItemsToTopItem(items);
       })(),
       (async () => {
